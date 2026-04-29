@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cattle Profit Calculator - V4.0 (Auto-Save)</title>
+    <title>Cattle Profit Calculator - V5.0</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
@@ -15,21 +15,18 @@
         .card { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
         .slider-thumb::-webkit-slider-thumb { appearance: none; width: 20px; height: 20px; background: #3b82f6; border-radius: 50%; cursor: pointer; }
         .slider-thumb-purple::-webkit-slider-thumb { appearance: none; width: 20px; height: 20px; background: #9333ea; border-radius: 50%; cursor: pointer; }
-        
-        /* Loading Overlay */
         #loadingOverlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(255,255,255,0.8); z-index: 50;
             display: none; justify-content: center; align-items: center;
         }
-        
-        /* Auto-save indicator */
         #saveIndicator {
             position: fixed; bottom: 20px; right: 20px;
             background: #333; color: white; padding: 8px 16px;
             border-radius: 20px; font-size: 12px; opacity: 0;
             transition: opacity 0.5s; pointer-events: none;
         }
+        .version-pill { background: #1e40af; color: white; font-size: 11px; padding: 2px 8px; border-radius: 9999px; font-weight: 600; }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -43,78 +40,73 @@
     </div>
 
     <!-- Auto-Save Indicator -->
-    <div id="saveIndicator"><i class="fas fa-check mr-1"></i> Changes Saved</div>
+    <div id="saveIndicator"><i class="fas fa-check mr-1"></i> <span data-i18n="changes_saved">Changes Saved</span></div>
 
     <!-- Top Bar -->
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-        <div class="flex items-center gap-x-4">
+        <div class="flex items-center gap-x-3">
             <h1 class="text-2xl md:text-3xl font-bold text-gray-800">
                 <i class="fas fa-cow text-blue-600 mr-2"></i><span data-i18n="title_main">Cattle Profit Calculator</span>
             </h1>
+            <span class="version-pill">V5.0</span>
         </div>
-        
+
         <div class="flex items-center gap-2 bg-white p-2 rounded-lg shadow-sm border border-gray-200">
-            <!-- Connection Status -->
             <div id="connectionStatus" class="flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gray-200 text-gray-500">
-                <i class="fas fa-link mr-1"></i> <span class="hidden sm:inline">Offline</span>
+                <i class="fas fa-link mr-1"></i> <span class="hidden sm:inline" data-i18n="offline">Offline</span>
             </div>
 
-            <!-- Settings Button -->
             <button onclick="openSettingsModal()" class="flex items-center gap-2 bg-blue-50 border border-blue-200 px-3 py-2 rounded-md hover:bg-blue-100 text-blue-700 font-medium text-sm transition-colors">
-                <i class="fas fa-cog"></i> Settings
+                <i class="fas fa-cog"></i> <span data-i18n="settings">Settings</span>
             </button>
 
             <div class="h-6 w-px bg-gray-300 mx-1"></div>
 
-            <!-- Language Selector -->
             <select id="langSelector" onchange="changeLanguage(this.value)" class="bg-transparent text-gray-700 py-1 px-2 focus:outline-none text-sm font-medium cursor-pointer">
-                <option value="en">🇺🇸 EN</option>
-                <option value="az">🇦🇿 AZ</option>
+                <option value="en">🇬🇧 EN</option>
                 <option value="ru">🇷🇺 RU</option>
+                <option value="az">🇦🇿 AZ</option>
             </select>
         </div>
     </div>
 
-    <!-- Modals -->
     <!-- Settings Modal -->
     <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-40 flex items-center justify-center">
         <div class="bg-white p-6 rounded-lg w-full max-w-md shadow-xl">
             <h3 class="text-lg font-bold mb-4 flex justify-between">
-                <span><i class="fas fa-sliders-h text-blue-600 mr-2"></i>App Settings</span>
+                <span><i class="fas fa-sliders-h text-blue-600 mr-2"></i><span data-i18n="app_settings">App Settings</span></span>
                 <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
             </h3>
-            
-            <!-- Connection Section -->
+
             <div class="mb-6 p-4 bg-gray-50 rounded border border-gray-200">
                 <label class="block text-sm font-bold text-gray-700 mb-2">
-                    <i class="fab fa-google-drive text-green-600 mr-1"></i> Google Sheet Connection
+                    <i class="fab fa-google-drive text-green-600 mr-1"></i> <span data-i18n="sheet_connection">Google Sheet Connection</span>
                 </label>
-                <p class="text-xs text-gray-500 mb-2">Paste your Apps Script Web App URL here.</p>
+                <p class="text-xs text-gray-500 mb-2" data-i18n="sheet_help">Paste your Apps Script Web App URL here.</p>
                 <div class="flex gap-2">
                     <input type="text" id="webAppUrlInput" placeholder="https://script.google.com/macros/s/..." class="flex-1 p-2 border rounded text-sm bg-white focus:border-blue-500">
-                    <button onclick="testConnection()" class="px-3 py-2 bg-gray-200 text-gray-700 rounded text-xs hover:bg-gray-300 font-bold">Test</button>
+                    <button onclick="testConnection()" class="px-3 py-2 bg-gray-200 text-gray-700 rounded text-xs hover:bg-gray-300 font-bold" data-i18n="test_btn">Test</button>
                 </div>
                 <p id="testResult" class="text-xs mt-2 font-bold hidden"></p>
-                <p class="text-[10px] text-gray-400 mt-2">Note: Ensure script is deployed as "Anyone" (Anonymous)</p>
+                <p class="text-[10px] text-gray-400 mt-2" data-i18n="sheet_note">Note: Ensure script is deployed as "Anyone" (Anonymous)</p>
             </div>
 
-            <!-- Currency Section -->
             <div class="mb-6">
                  <label class="block text-sm font-bold text-gray-700 mb-2">
-                    <i class="fas fa-money-bill-wave text-green-600 mr-1"></i> Currency Symbol
+                    <i class="fas fa-money-bill-wave text-green-600 mr-1"></i> <span data-i18n="currency_label">Currency Symbol</span>
                 </label>
                 <div class="flex gap-2">
-                    <button onclick="setCurrency('$')" class="flex-1 py-2 border rounded hover:bg-gray-50 font-bold text-gray-700 currency-btn" data-val="$">$</button>
-                    <button onclick="setCurrency('₼')" class="flex-1 py-2 border rounded hover:bg-gray-50 font-bold text-gray-700 currency-btn" data-val="₼">₼</button>
-                    <button onclick="setCurrency('€')" class="flex-1 py-2 border rounded hover:bg-gray-50 font-bold text-gray-700 currency-btn" data-val="€">€</button>
-                    <button onclick="setCurrency('₽')" class="flex-1 py-2 border rounded hover:bg-gray-50 font-bold text-gray-700 currency-btn" data-val="₽">₽</button>
+                    <button onclick="setCurrency('₼')" class="flex-1 py-2 border rounded hover:bg-gray-50 font-bold text-gray-700 currency-btn" data-val="₼">₼ AZN</button>
+                    <button onclick="setCurrency('$')" class="flex-1 py-2 border rounded hover:bg-gray-50 font-bold text-gray-700 currency-btn" data-val="$">$ USD</button>
+                    <button onclick="setCurrency('€')" class="flex-1 py-2 border rounded hover:bg-gray-50 font-bold text-gray-700 currency-btn" data-val="€">€ EUR</button>
+                    <button onclick="setCurrency('₽')" class="flex-1 py-2 border rounded hover:bg-gray-50 font-bold text-gray-700 currency-btn" data-val="₽">₽ RUB</button>
                 </div>
             </div>
 
             <div class="flex justify-end gap-2 pt-4 border-t">
-                <button onclick="resetToDefaults()" class="mr-auto px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded">Reset All Data</button>
-                <button onclick="closeSettingsModal()" class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Cancel</button>
-                <button onclick="saveSettings()" class="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 font-bold">Save & Connect</button>
+                <button onclick="resetToDefaults()" class="mr-auto px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded" data-i18n="reset_all">Reset All Data</button>
+                <button onclick="closeSettingsModal()" class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded" data-i18n="cancel">Cancel</button>
+                <button onclick="saveSettings()" class="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 font-bold" data-i18n="save_connect">Save & Connect</button>
             </div>
         </div>
     </div>
@@ -123,62 +115,71 @@
     <div id="addBreedModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-40 flex items-center justify-center">
         <div class="bg-white p-6 rounded-lg w-full max-w-lg shadow-xl max-h-[90vh] overflow-y-auto">
             <h3 class="text-lg font-bold mb-4 flex justify-between">
-                <span><i class="fas fa-plus-circle text-blue-600 mr-2"></i>Add New Breed</span>
+                <span><i class="fas fa-plus-circle text-blue-600 mr-2"></i><span data-i18n="add_new_breed">Add New Breed</span></span>
                 <button onclick="closeAddBreedModal()" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
             </h3>
-            
+
             <div class="space-y-4">
                 <div>
-                    <label class="block text-sm font-bold text-gray-700">Breed Name</label>
+                    <label class="block text-sm font-bold text-gray-700" data-i18n="breed_name">Breed Name</label>
                     <input type="text" id="newBreedName" class="w-full p-2 border rounded mt-1">
                 </div>
-                
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700" data-i18n="breed_category">Category</label>
+                    <select id="newBreedCategory" class="w-full p-2 border rounded mt-1">
+                        <option value="dairy" data-i18n="cat_dairy">Dairy (Holstein-type)</option>
+                        <option value="cross" selected data-i18n="cat_cross">Dairy × Beef Cross</option>
+                        <option value="beef" data-i18n="cat_beef">Pure Beef</option>
+                    </select>
+                </div>
+
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">ADG Table (g/day)</label>
-                        <p class="text-[10px] text-gray-500 mb-2">Paste 18 values (Month 1-18)</p>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">ADG (g/day)</label>
+                        <p class="text-[10px] text-gray-500 mb-2" data-i18n="paste_24_adg">Paste 24 values (Month 1–24)</p>
                         <textarea id="newBreedADG" rows="4" class="w-full p-2 border rounded text-xs font-mono" placeholder="720, 750, 850..."></textarea>
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">DMI Table (kg/day)</label>
-                        <p class="text-[10px] text-gray-500 mb-2">Paste 18 values (Month 1-18)</p>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">DMI (kg/day)</label>
+                        <p class="text-[10px] text-gray-500 mb-2" data-i18n="paste_24_dmi">Paste 24 values (Month 1–24)</p>
                         <textarea id="newBreedDMI" rows="4" class="w-full p-2 border rounded text-xs font-mono" placeholder="1.8, 2.7, 3.6..."></textarea>
                     </div>
                 </div>
-                
+
                 <div class="bg-blue-50 p-3 rounded border border-blue-100">
-                    <p class="text-xs font-bold text-blue-800 mb-2">Quick Templates</p>
+                    <p class="text-xs font-bold text-blue-800 mb-2" data-i18n="quick_templates">Quick Templates</p>
                     <div class="flex gap-2">
-                        <button onclick="fillSampleData('high')" class="flex-1 py-1 text-xs bg-white border border-blue-200 rounded text-blue-600 hover:bg-blue-50">High Performance</button>
-                        <button onclick="fillSampleData('avg')" class="flex-1 py-1 text-xs bg-white border-blue-200 rounded text-blue-600 hover:bg-blue-50">Average</button>
+                        <button onclick="fillSampleData('high')" class="flex-1 py-1 text-xs bg-white border border-blue-200 rounded text-blue-600 hover:bg-blue-50" data-i18n="tpl_high">High Performance</button>
+                        <button onclick="fillSampleData('avg')" class="flex-1 py-1 text-xs bg-white border-blue-200 rounded text-blue-600 hover:bg-blue-50" data-i18n="tpl_avg">Average</button>
                     </div>
                 </div>
             </div>
 
             <div class="mt-6 flex justify-end gap-2">
-                <button onclick="closeAddBreedModal()" class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Cancel</button>
-                <button onclick="submitNewBreed()" class="px-4 py-2 text-sm bg-green-600 text-white rounded hover:bg-green-700 font-bold">Save Breed</button>
+                <button onclick="closeAddBreedModal()" class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded" data-i18n="cancel">Cancel</button>
+                <button onclick="submitNewBreed()" class="px-4 py-2 text-sm bg-green-600 text-white rounded hover:bg-green-700 font-bold" data-i18n="save_breed">Save Breed</button>
             </div>
         </div>
     </div>
 
     <!-- Main Grid -->
     <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
+
         <!-- Sidebar -->
         <div class="lg:col-span-5 space-y-6">
-            
+
             <!-- Global Financials -->
             <div class="card p-4 bg-gray-50 border border-gray-200">
                 <h3 class="text-xs font-bold text-gray-500 uppercase mb-3 border-b pb-1" data-i18n="global_assumptions">Global Assumptions</h3>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-medium text-gray-500"><span data-i18n="calf_cost">Calf Cost</span> <span class="curr-symbol">$</span></label>
-                        <input type="number" id="calfCost" value="300" class="w-full mt-1 p-1 border rounded text-sm bg-white" oninput="onInputChange()">
+                        <label class="block text-xs font-medium text-gray-500"><span data-i18n="calf_cost">Calf Cost</span> <span class="curr-symbol">₼</span></label>
+                        <input type="number" id="calfCost" value="510" class="w-full mt-1 p-1 border rounded text-sm bg-white" oninput="onInputChange()">
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-gray-500" data-i18n="interest_rate">Interest (%)</label>
-                        <input type="number" id="interestRate" value="8" class="w-full mt-1 p-1 border rounded text-sm bg-white" oninput="onInputChange()">
+                        <input type="number" id="interestRate" value="5" class="w-full mt-1 p-1 border rounded text-sm bg-white" oninput="onInputChange()">
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-blue-600" data-i18n="overhead_bull">Overhead Bull (%)</label>
@@ -188,6 +189,14 @@
                         <label class="block text-xs font-medium text-pink-600" data-i18n="overhead_heifer">Overhead Heifer (%)</label>
                         <input type="number" id="overheadPctHeifer" value="25" class="w-full mt-1 p-1 border rounded text-sm bg-pink-50" oninput="onInputChange()">
                     </div>
+                    <div>
+                        <label class="block text-xs font-medium text-orange-600" data-i18n="mortality_pct">Mortality (% of total)</label>
+                        <input type="number" id="mortalityPct" value="5" class="w-full mt-1 p-1 border rounded text-sm bg-orange-50" oninput="onInputChange()">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500" data-i18n="birth_weight">Birth Weight (kg)</label>
+                        <input type="number" id="birthWeight" value="40" class="w-full mt-1 p-1 border rounded text-sm bg-white" oninput="onInputChange()">
+                    </div>
                 </div>
             </div>
 
@@ -196,7 +205,7 @@
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-bold text-gray-700" data-i18n="scenario_a">Scenario A</h2>
                     <div class="flex gap-2">
-                        <button onclick="saveScenario('A')" class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded hover:bg-blue-200 font-bold" title="Save results to Sheet"><i class="fas fa-cloud-upload-alt mr-1"></i>Save to Sheet</button>
+                        <button onclick="saveScenario('A')" class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded hover:bg-blue-200 font-bold" title="Save results to Sheet"><i class="fas fa-cloud-upload-alt mr-1"></i><span data-i18n="save_sheet">Save</span></button>
                         <div class="flex bg-gray-100 rounded p-1">
                             <button onclick="setType('A', 'bull')" id="btn-type-A-bull" class="px-3 py-1 text-xs rounded font-bold bg-white text-blue-600 shadow" data-i18n="bull">Bull</button>
                             <button onclick="setType('A', 'heifer')" id="btn-type-A-heifer" class="px-3 py-1 text-xs rounded text-gray-500 hover:bg-gray-200" data-i18n="heifer">Heifer</button>
@@ -222,7 +231,7 @@
                     <div>
                         <div class="flex justify-between items-end mb-1">
                             <label class="block text-sm font-medium text-gray-600" data-i18n="breed">Breed</label>
-                            <button onclick="openAddBreedModal()" class="text-[10px] text-blue-600 hover:underline font-bold"><i class="fas fa-plus mr-1"></i>New Breed</button>
+                            <button onclick="openAddBreedModal()" class="text-[10px] text-blue-600 hover:underline font-bold"><i class="fas fa-plus mr-1"></i><span data-i18n="new_breed">New Breed</span></button>
                         </div>
                         <select id="breedA" class="w-full p-2 border rounded shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm" onchange="onInputChange()"></select>
                     </div>
@@ -234,35 +243,34 @@
                         </h4>
                         <div class="mb-2 grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-[10px] text-gray-500">Starter <span class="curr-symbol">$</span>/kg</label>
+                                <label class="block text-[10px] text-gray-500"><span data-i18n="starter">Starter</span> <span class="curr-symbol">₼</span>/kg</label>
                                 <input type="number" id="feedPriceInitialA" value="0.34" step="0.01" class="w-full p-1 border rounded text-xs" oninput="onInputChange()">
                             </div>
                             <div>
-                                <label class="block text-[10px] text-gray-500">End Age (mo)</label>
+                                <label class="block text-[10px] text-gray-500" data-i18n="end_age_starter">End Age (mo)</label>
                                 <input type="number" id="ageStarterEndA" value="5" step="1" class="w-full p-1 border rounded text-xs" oninput="onInputChange()">
                             </div>
                         </div>
 
-                        <!-- Restored Layout for Growing Settings -->
                         <div id="feed-bull-A" class="space-y-2">
                              <div class="grid grid-cols-2 gap-2">
                                 <div>
-                                    <label class="block text-[10px] text-blue-700">Grow <span class="curr-symbol">$</span>/kg</label>
-                                    <input type="number" id="feedPriceBullGrowingA" value="0.32" step="0.01" class="w-full p-1 border border-blue-300 rounded text-xs" oninput="onInputChange()">
+                                    <label class="block text-[10px] text-blue-700"><span data-i18n="grow_phase">Grow</span> <span class="curr-symbol">₼</span>/kg</label>
+                                    <input type="number" id="feedPriceBullGrowingA" value="0.234" step="0.001" class="w-full p-1 border border-blue-300 rounded text-xs" oninput="onInputChange()">
                                 </div>
                                 <div>
                                     <label class="block text-[10px] text-gray-500" data-i18n="end_growing_age">End Growing (mo)</label>
-                                    <input type="number" id="ageBullSwitchA" value="12" step="1" class="w-full p-1 border border-blue-300 rounded text-xs" oninput="onInputChange()">
+                                    <input type="number" id="ageBullSwitchA" value="14" step="1" class="w-full p-1 border border-blue-300 rounded text-xs" oninput="onInputChange()">
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-[10px] text-blue-700">Fatten <span class="curr-symbol">$</span>/kg</label>
-                                 <input type="number" id="feedPriceBullFatteningA" value="0.35" step="0.01" class="w-full p-1 border border-blue-300 rounded text-xs" oninput="onInputChange()">
+                                <label class="block text-[10px] text-blue-700"><span data-i18n="fatten_phase">Fatten</span> <span class="curr-symbol">₼</span>/kg</label>
+                                 <input type="number" id="feedPriceBullFatteningA" value="0.51" step="0.01" class="w-full p-1 border border-blue-300 rounded text-xs" oninput="onInputChange()">
                             </div>
                         </div>
 
                         <div id="feed-heifer-A" class="hidden">
-                            <label class="block text-[10px] text-pink-700">Heifer Feed <span class="curr-symbol">$</span>/kg</label>
+                            <label class="block text-[10px] text-pink-700"><span data-i18n="heifer_feed">Heifer Feed</span> <span class="curr-symbol">₼</span>/kg</label>
                             <input type="number" id="feedPriceHeiferA" value="0.18" step="0.01" class="w-full p-1 border border-pink-300 rounded text-xs" oninput="onInputChange()">
                         </div>
                     </div>
@@ -271,16 +279,16 @@
                     <div id="import-inputs-A" class="hidden bg-blue-50 p-3 rounded space-y-2 border border-blue-100">
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-[10px] text-gray-500">Weight (kg)</label>
+                                <label class="block text-[10px] text-gray-500" data-i18n="weight_kg">Weight (kg)</label>
                                 <input type="number" id="importWeightA" value="250" class="w-full p-1 border rounded text-sm" oninput="onInputChange()">
                             </div>
                             <div>
-                                <label class="block text-[10px] text-gray-500">Age (mo)</label>
+                                <label class="block text-[10px] text-gray-500" data-i18n="age_mo">Age (mo)</label>
                                 <input type="number" id="importAgeA" value="6" class="w-full p-1 border rounded text-sm" oninput="onInputChange()">
                             </div>
                         </div>
                         <div>
-                            <label class="block text-[10px] text-gray-500">Price (<span class="curr-symbol">$</span>/kg)</label>
+                            <label class="block text-[10px] text-gray-500" data-i18n="price_per_kg">Price (per kg)</label>
                             <input type="number" id="importPriceA" value="4.5" step="0.1" class="w-full p-1 border rounded text-sm" oninput="onInputChange()">
                         </div>
                     </div>
@@ -290,21 +298,38 @@
                             <span data-i18n="target_age">Target Age</span>
                             <span id="ageDisplayA" class="text-blue-600 font-bold">18 mo</span>
                         </label>
-                        <input type="range" id="ageA" min="10" max="36" value="18" class="w-full mt-2 slider-thumb h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" oninput="onInputChange()">
+                        <input type="range" id="ageA" min="10" max="24" value="18" class="w-full mt-2 slider-thumb h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" oninput="onInputChange()">
                     </div>
 
                     <!-- Market A -->
                     <div id="inputs-A-bull" class="block">
-                        <label class="block text-sm font-medium text-gray-600"><span data-i18n="meat_price">Meat Price</span> (<span class="curr-symbol">$</span>/kg)</label>
-                        <input type="number" id="meatPriceA" value="3.5" step="0.1" class="w-full mt-1 p-2 border rounded shadow-sm text-sm" oninput="onInputChange()">
+                        <label class="block text-xs font-medium text-gray-500 mb-1" data-i18n="sale_method">Sale Method</label>
+                        <div class="flex gap-2 mb-2">
+                            <label class="inline-flex items-center text-xs">
+                                <input type="radio" name="saleA" value="live" checked onchange="toggleSale('A')" class="text-blue-600 focus:ring-blue-500">
+                                <span class="ml-1 text-gray-700" data-i18n="live_weight">Live Weight</span>
+                            </label>
+                            <label class="inline-flex items-center text-xs ml-4">
+                                <input type="radio" name="saleA" value="carcass" onchange="toggleSale('A')" class="text-blue-600 focus:ring-blue-500">
+                                <span class="ml-1 text-gray-700" data-i18n="carcass">Carcass</span>
+                            </label>
+                        </div>
+                        <div id="livePriceWrapA">
+                            <label class="block text-sm font-medium text-gray-600"><span data-i18n="live_price">Live Price</span> (<span class="curr-symbol">₼</span>/kg)</label>
+                            <input type="number" id="meatPriceA" value="7" step="0.1" class="w-full mt-1 p-2 border rounded shadow-sm text-sm" oninput="onInputChange()">
+                        </div>
+                        <div id="carcassPriceWrapA" class="hidden">
+                            <label class="block text-sm font-medium text-gray-600"><span data-i18n="carcass_price">Carcass Price</span> (<span class="curr-symbol">₼</span>/kg)</label>
+                            <input type="number" id="carcassPriceA" value="9" step="0.1" class="w-full mt-1 p-2 border rounded shadow-sm text-sm" oninput="onInputChange()">
+                        </div>
                     </div>
                     <div id="inputs-A-heifer" class="hidden grid-cols-2 gap-2">
                         <div>
-                            <label class="block text-xs font-medium text-gray-600">Sale (<span class="curr-symbol">$</span>)</label>
+                            <label class="block text-xs font-medium text-gray-600"><span data-i18n="sale_price">Sale</span> (<span class="curr-symbol">₼</span>)</label>
                             <input type="number" id="heiferPriceA" value="2200" class="w-full mt-1 p-2 border rounded shadow-sm text-sm" oninput="onInputChange()">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-gray-600">Semen (<span class="curr-symbol">$</span>)</label>
+                            <label class="block text-xs font-medium text-gray-600"><span data-i18n="semen">Semen</span> (<span class="curr-symbol">₼</span>)</label>
                             <input type="number" id="semenCostA" value="80" class="w-full mt-1 p-2 border rounded shadow-sm text-sm" oninput="onInputChange()">
                         </div>
                     </div>
@@ -312,11 +337,11 @@
 
                 <!-- KPI Box A -->
                 <div class="mt-6 pt-4 border-t border-gray-100">
-                    <h3 class="text-sm font-bold text-gray-400 uppercase mb-2"><span data-i18n="results">Results</span></h3>
+                    <h3 class="text-sm font-bold text-gray-400 uppercase mb-2" data-i18n="results">Results</h3>
                     <div class="grid grid-cols-2 gap-4 mb-4">
                         <div class="bg-gray-50 p-2 rounded text-center">
                             <p class="text-[10px] text-gray-500" data-i18n="net_profit">Net Profit</p>
-                            <p id="kpiProfitA" class="text-xl font-bold text-green-600">$0</p>
+                            <p id="kpiProfitA" class="text-xl font-bold text-green-600">₼0</p>
                         </div>
                         <div class="bg-gray-50 p-2 rounded text-center">
                             <p class="text-[10px] text-gray-500" data-i18n="roi">ROI</p>
@@ -329,21 +354,33 @@
                         </div>
                         <div class="bg-gray-50 p-2 rounded text-center">
                             <p class="text-[10px] text-gray-500" data-i18n="total_cost">Total Cost</p>
-                            <p id="kpiCostA" class="text-lg font-bold text-red-500">$0</p>
+                            <p id="kpiCostA" class="text-lg font-bold text-red-500">₼0</p>
                         </div>
                     </div>
                      <div class="grid grid-cols-3 gap-2">
                         <div class="bg-indigo-50 p-1 rounded text-center">
-                            <p class="text-[9px] text-gray-500 uppercase">Avg ADG</p>
+                            <p class="text-[9px] text-gray-500 uppercase" data-i18n="avg_adg_short">Avg ADG</p>
                             <p id="kpiAdgA" class="text-xs font-bold text-gray-700">-</p>
                         </div>
                         <div class="bg-indigo-50 p-1 rounded text-center">
-                            <p class="text-[9px] text-gray-500 uppercase">DMI</p>
+                            <p class="text-[9px] text-gray-500 uppercase" data-i18n="dmi_short">DMI</p>
                             <p id="kpiDmiA" class="text-xs font-bold text-gray-700">-</p>
                         </div>
                         <div class="bg-indigo-50 p-1 rounded text-center">
-                            <p class="text-[9px] text-gray-500 uppercase">Cost/Day</p>
+                            <p class="text-[9px] text-gray-500 uppercase" data-i18n="cost_day_short">Cost/Day</p>
                             <p id="kpiDailyCostA" class="text-xs font-bold text-gray-700">-</p>
+                        </div>
+                        <div class="bg-emerald-50 p-1 rounded text-center">
+                            <p class="text-[9px] text-gray-500 uppercase" data-i18n="dressing_short">Dressing</p>
+                            <p id="kpiDressA" class="text-xs font-bold text-gray-700">-</p>
+                        </div>
+                        <div class="bg-emerald-50 p-1 rounded text-center">
+                            <p class="text-[9px] text-gray-500 uppercase" data-i18n="fcr_short">FCR</p>
+                            <p id="kpiFcrA" class="text-xs font-bold text-gray-700">-</p>
+                        </div>
+                        <div class="bg-emerald-50 p-1 rounded text-center">
+                            <p class="text-[9px] text-gray-500 uppercase" data-i18n="cost_kg_gain_short">Cost/kg gain</p>
+                            <p id="kpiCpkA" class="text-xs font-bold text-gray-700">-</p>
                         </div>
                     </div>
                 </div>
@@ -363,7 +400,7 @@
                  <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-bold text-gray-700" data-i18n="scenario_b">Scenario B</h2>
                     <div class="flex gap-2">
-                        <button onclick="saveScenario('B')" class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded hover:bg-purple-200 font-bold" title="Save results to Sheet"><i class="fas fa-cloud-upload-alt mr-1"></i>Save to Sheet</button>
+                        <button onclick="saveScenario('B')" class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded hover:bg-purple-200 font-bold" title="Save results to Sheet"><i class="fas fa-cloud-upload-alt mr-1"></i><span data-i18n="save_sheet">Save</span></button>
                         <div class="flex bg-gray-100 rounded p-1">
                             <button onclick="setType('B', 'bull')" id="btn-type-B-bull" class="px-3 py-1 text-xs rounded font-bold bg-white text-purple-600 shadow" data-i18n="bull">Bull</button>
                             <button onclick="setType('B', 'heifer')" id="btn-type-B-heifer" class="px-3 py-1 text-xs rounded text-gray-500 hover:bg-gray-200" data-i18n="heifer">Heifer</button>
@@ -375,11 +412,11 @@
                     <label class="block text-xs font-medium text-gray-500 mb-1" data-i18n="source">Source</label>
                     <div class="flex gap-2">
                         <label class="inline-flex items-center">
-                            <input type="radio" name="sourceB" value="farm" onchange="toggleSource('B')" class="text-purple-600 focus:ring-purple-500">
+                            <input type="radio" name="sourceB" value="farm" checked onchange="toggleSource('B')" class="text-purple-600 focus:ring-purple-500">
                             <span class="ml-2 text-sm text-gray-700" data-i18n="farm_born">Farm Born</span>
                         </label>
                         <label class="inline-flex items-center ml-4">
-                            <input type="radio" name="sourceB" value="import" checked onchange="toggleSource('B')" class="text-purple-600 focus:ring-purple-500">
+                            <input type="radio" name="sourceB" value="import" onchange="toggleSource('B')" class="text-purple-600 focus:ring-purple-500">
                             <span class="ml-2 text-sm text-gray-700" data-i18n="imported">Imported</span>
                         </label>
                     </div>
@@ -389,65 +426,62 @@
                     <div>
                          <div class="flex justify-between items-end mb-1">
                             <label class="block text-sm font-medium text-gray-600" data-i18n="breed">Breed</label>
-                            <button onclick="openAddBreedModal()" class="text-[10px] text-purple-600 hover:underline font-bold"><i class="fas fa-plus mr-1"></i>New Breed</button>
+                            <button onclick="openAddBreedModal()" class="text-[10px] text-purple-600 hover:underline font-bold"><i class="fas fa-plus mr-1"></i><span data-i18n="new_breed">New Breed</span></button>
                         </div>
                         <select id="breedB" class="w-full p-2 border rounded shadow-sm focus:ring-purple-500 focus:border-purple-500 text-sm" onchange="onInputChange()"></select>
                     </div>
 
-                    <!-- Feeding Strategy B -->
                      <div class="bg-yellow-50 p-3 rounded border border-yellow-200 mt-2">
                         <h4 class="text-xs font-bold text-yellow-800 mb-2 border-b border-yellow-200 pb-1 flex justify-between">
                             <span data-i18n="feeding_strategy">Feeding Strategy</span>
                         </h4>
                         <div class="mb-2 grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-[10px] text-gray-500">Starter <span class="curr-symbol">$</span>/kg</label>
+                                <label class="block text-[10px] text-gray-500"><span data-i18n="starter">Starter</span> <span class="curr-symbol">₼</span>/kg</label>
                                 <input type="number" id="feedPriceInitialB" value="0.34" step="0.01" class="w-full p-1 border rounded text-xs" oninput="onInputChange()">
                             </div>
                             <div>
-                                <label class="block text-[10px] text-gray-500">End Age (mo)</label>
+                                <label class="block text-[10px] text-gray-500" data-i18n="end_age_starter">End Age (mo)</label>
                                 <input type="number" id="ageStarterEndB" value="5" step="1" class="w-full p-1 border rounded text-xs" oninput="onInputChange()">
                             </div>
                         </div>
 
-                        <!-- Restored Layout for Growing Settings B -->
                         <div id="feed-bull-B" class="space-y-2">
                              <div class="grid grid-cols-2 gap-2">
                                 <div>
-                                    <label class="block text-[10px] text-blue-700">Grow <span class="curr-symbol">$</span>/kg</label>
-                                    <input type="number" id="feedPriceBullGrowingB" value="0.32" step="0.01" class="w-full p-1 border border-blue-300 rounded text-xs" oninput="onInputChange()">
+                                    <label class="block text-[10px] text-blue-700"><span data-i18n="grow_phase">Grow</span> <span class="curr-symbol">₼</span>/kg</label>
+                                    <input type="number" id="feedPriceBullGrowingB" value="0.234" step="0.001" class="w-full p-1 border border-blue-300 rounded text-xs" oninput="onInputChange()">
                                 </div>
                                 <div>
                                     <label class="block text-[10px] text-gray-500" data-i18n="end_growing_age">End Growing (mo)</label>
-                                    <input type="number" id="ageBullSwitchB" value="12" step="1" class="w-full p-1 border border-blue-300 rounded text-xs" oninput="onInputChange()">
+                                    <input type="number" id="ageBullSwitchB" value="14" step="1" class="w-full p-1 border border-blue-300 rounded text-xs" oninput="onInputChange()">
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-[10px] text-blue-700">Fatten <span class="curr-symbol">$</span>/kg</label>
-                                 <input type="number" id="feedPriceBullFatteningB" value="0.35" step="0.01" class="w-full p-1 border border-blue-300 rounded text-xs" oninput="onInputChange()">
+                                <label class="block text-[10px] text-blue-700"><span data-i18n="fatten_phase">Fatten</span> <span class="curr-symbol">₼</span>/kg</label>
+                                 <input type="number" id="feedPriceBullFatteningB" value="0.51" step="0.01" class="w-full p-1 border border-blue-300 rounded text-xs" oninput="onInputChange()">
                             </div>
                         </div>
 
                         <div id="feed-heifer-B" class="hidden">
-                            <label class="block text-[10px] text-pink-700">Heifer Feed <span class="curr-symbol">$</span>/kg</label>
+                            <label class="block text-[10px] text-pink-700"><span data-i18n="heifer_feed">Heifer Feed</span> <span class="curr-symbol">₼</span>/kg</label>
                             <input type="number" id="feedPriceHeiferB" value="0.18" step="0.01" class="w-full p-1 border border-pink-300 rounded text-xs" oninput="onInputChange()">
                         </div>
                     </div>
 
-                    <!-- Import Inputs B -->
-                    <div id="import-inputs-B" class="block bg-purple-50 p-3 rounded space-y-2 border border-purple-100">
+                    <div id="import-inputs-B" class="hidden bg-purple-50 p-3 rounded space-y-2 border border-purple-100">
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-[10px] text-gray-500">Weight (kg)</label>
+                                <label class="block text-[10px] text-gray-500" data-i18n="weight_kg">Weight (kg)</label>
                                 <input type="number" id="importWeightB" value="250" class="w-full p-1 border rounded text-sm" oninput="onInputChange()">
                             </div>
                             <div>
-                                <label class="block text-[10px] text-gray-500">Age (mo)</label>
+                                <label class="block text-[10px] text-gray-500" data-i18n="age_mo">Age (mo)</label>
                                 <input type="number" id="importAgeB" value="6" class="w-full p-1 border rounded text-sm" oninput="onInputChange()">
                             </div>
                         </div>
                         <div>
-                            <label class="block text-[10px] text-gray-500">Price (<span class="curr-symbol">$</span>/kg)</label>
+                            <label class="block text-[10px] text-gray-500" data-i18n="price_per_kg">Price (per kg)</label>
                             <input type="number" id="importPriceB" value="4.5" step="0.1" class="w-full p-1 border rounded text-sm" oninput="onInputChange()">
                         </div>
                     </div>
@@ -457,21 +491,37 @@
                             <span data-i18n="target_age">Target Age</span>
                             <span id="ageDisplayB" class="text-purple-600 font-bold">18 mo</span>
                         </label>
-                        <input type="range" id="ageB" min="10" max="36" value="18" class="w-full mt-2 slider-thumb-purple h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" oninput="onInputChange()">
+                        <input type="range" id="ageB" min="10" max="24" value="18" class="w-full mt-2 slider-thumb-purple h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" oninput="onInputChange()">
                     </div>
 
-                     <!-- Market B -->
                     <div id="inputs-B-bull" class="block">
-                        <label class="block text-sm font-medium text-gray-600"><span data-i18n="meat_price">Meat Price</span> (<span class="curr-symbol">$</span>/kg)</label>
-                        <input type="number" id="meatPriceB" value="3.5" step="0.1" class="w-full mt-1 p-2 border rounded shadow-sm text-sm" oninput="onInputChange()">
+                        <label class="block text-xs font-medium text-gray-500 mb-1" data-i18n="sale_method">Sale Method</label>
+                        <div class="flex gap-2 mb-2">
+                            <label class="inline-flex items-center text-xs">
+                                <input type="radio" name="saleB" value="live" checked onchange="toggleSale('B')" class="text-purple-600 focus:ring-purple-500">
+                                <span class="ml-1 text-gray-700" data-i18n="live_weight">Live Weight</span>
+                            </label>
+                            <label class="inline-flex items-center text-xs ml-4">
+                                <input type="radio" name="saleB" value="carcass" onchange="toggleSale('B')" class="text-purple-600 focus:ring-purple-500">
+                                <span class="ml-1 text-gray-700" data-i18n="carcass">Carcass</span>
+                            </label>
+                        </div>
+                        <div id="livePriceWrapB">
+                            <label class="block text-sm font-medium text-gray-600"><span data-i18n="live_price">Live Price</span> (<span class="curr-symbol">₼</span>/kg)</label>
+                            <input type="number" id="meatPriceB" value="7" step="0.1" class="w-full mt-1 p-2 border rounded shadow-sm text-sm" oninput="onInputChange()">
+                        </div>
+                        <div id="carcassPriceWrapB" class="hidden">
+                            <label class="block text-sm font-medium text-gray-600"><span data-i18n="carcass_price">Carcass Price</span> (<span class="curr-symbol">₼</span>/kg)</label>
+                            <input type="number" id="carcassPriceB" value="9" step="0.1" class="w-full mt-1 p-2 border rounded shadow-sm text-sm" oninput="onInputChange()">
+                        </div>
                     </div>
                     <div id="inputs-B-heifer" class="hidden grid-cols-2 gap-2">
                         <div>
-                            <label class="block text-xs font-medium text-gray-600">Sale (<span class="curr-symbol">$</span>)</label>
+                            <label class="block text-xs font-medium text-gray-600"><span data-i18n="sale_price">Sale</span> (<span class="curr-symbol">₼</span>)</label>
                             <input type="number" id="heiferPriceB" value="2200" class="w-full mt-1 p-2 border rounded shadow-sm text-sm" oninput="onInputChange()">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-gray-600">Semen (<span class="curr-symbol">$</span>)</label>
+                            <label class="block text-xs font-medium text-gray-600"><span data-i18n="semen">Semen</span> (<span class="curr-symbol">₼</span>)</label>
                             <input type="number" id="semenCostB" value="80" class="w-full mt-1 p-2 border rounded shadow-sm text-sm" oninput="onInputChange()">
                         </div>
                     </div>
@@ -479,11 +529,11 @@
 
                 <!-- KPI Box B -->
                 <div class="mt-6 pt-4 border-t border-gray-100">
-                    <h3 class="text-sm font-bold text-gray-400 uppercase mb-2"><span data-i18n="results">Results</span></h3>
+                    <h3 class="text-sm font-bold text-gray-400 uppercase mb-2" data-i18n="results">Results</h3>
                     <div class="grid grid-cols-2 gap-4 mb-4">
                         <div class="bg-gray-50 p-2 rounded text-center">
                             <p class="text-[10px] text-gray-500" data-i18n="net_profit">Net Profit</p>
-                            <p id="kpiProfitB" class="text-xl font-bold text-gray-700">$0</p>
+                            <p id="kpiProfitB" class="text-xl font-bold text-gray-700">₼0</p>
                         </div>
                         <div class="bg-gray-50 p-2 rounded text-center">
                             <p class="text-[10px] text-gray-500" data-i18n="roi">ROI</p>
@@ -496,25 +546,37 @@
                         </div>
                         <div class="bg-gray-50 p-2 rounded text-center">
                             <p class="text-[10px] text-gray-500" data-i18n="total_cost">Total Cost</p>
-                            <p id="kpiCostB" class="text-lg font-bold text-red-500">$0</p>
+                            <p id="kpiCostB" class="text-lg font-bold text-red-500">₼0</p>
                         </div>
                     </div>
                     <div class="grid grid-cols-3 gap-2">
                         <div class="bg-indigo-50 p-1 rounded text-center">
-                            <p class="text-[9px] text-gray-500 uppercase">Avg ADG</p>
+                            <p class="text-[9px] text-gray-500 uppercase" data-i18n="avg_adg_short">Avg ADG</p>
                             <p id="kpiAdgB" class="text-xs font-bold text-gray-700">-</p>
                         </div>
                         <div class="bg-indigo-50 p-1 rounded text-center">
-                            <p class="text-[9px] text-gray-500 uppercase">DMI</p>
+                            <p class="text-[9px] text-gray-500 uppercase" data-i18n="dmi_short">DMI</p>
                             <p id="kpiDmiB" class="text-xs font-bold text-gray-700">-</p>
                         </div>
                         <div class="bg-indigo-50 p-1 rounded text-center">
-                            <p class="text-[9px] text-gray-500 uppercase">Cost/Day</p>
+                            <p class="text-[9px] text-gray-500 uppercase" data-i18n="cost_day_short">Cost/Day</p>
                             <p id="kpiDailyCostB" class="text-xs font-bold text-gray-700">-</p>
+                        </div>
+                        <div class="bg-emerald-50 p-1 rounded text-center">
+                            <p class="text-[9px] text-gray-500 uppercase" data-i18n="dressing_short">Dressing</p>
+                            <p id="kpiDressB" class="text-xs font-bold text-gray-700">-</p>
+                        </div>
+                        <div class="bg-emerald-50 p-1 rounded text-center">
+                            <p class="text-[9px] text-gray-500 uppercase" data-i18n="fcr_short">FCR</p>
+                            <p id="kpiFcrB" class="text-xs font-bold text-gray-700">-</p>
+                        </div>
+                        <div class="bg-emerald-50 p-1 rounded text-center">
+                            <p class="text-[9px] text-gray-500 uppercase" data-i18n="cost_kg_gain_short">Cost/kg gain</p>
+                            <p id="kpiCpkB" class="text-xs font-bold text-gray-700">-</p>
                         </div>
                     </div>
                      <div id="profitDiff" class="mt-2 text-xs font-bold text-center bg-gray-100 text-gray-500 py-1 rounded">
-                        Difference: $0
+                        Difference: ₼0
                     </div>
                 </div>
             </div>
@@ -522,7 +584,7 @@
 
         <!-- Main Content -->
         <div class="lg:col-span-7 space-y-6">
-            
+
             <!-- Summary Table -->
             <div class="card p-6 overflow-x-auto">
                 <h3 class="text-lg font-bold text-gray-700 mb-4" data-i18n="summary_title">Performance Summary Comparison</h3>
@@ -538,20 +600,20 @@
                     <tbody class="divide-y divide-gray-100">
                         <tr class="bg-white">
                             <td class="px-4 py-3 font-medium text-gray-900" data-i18n="total_revenue">Total Income (Revenue)</td>
-                            <td class="px-4 py-3 font-bold" id="sumRevenueA">$0</td>
-                            <td class="px-4 py-3 font-bold" id="sumRevenueB">$0</td>
+                            <td class="px-4 py-3 font-bold" id="sumRevenueA">₼0</td>
+                            <td class="px-4 py-3 font-bold" id="sumRevenueB">₼0</td>
                             <td class="px-4 py-3 text-xs" id="sumRevenueDiff">-</td>
                         </tr>
                         <tr class="bg-gray-50">
                             <td class="px-4 py-3 font-medium text-gray-900" data-i18n="total_cost">Total Cost</td>
-                            <td class="px-4 py-3 text-red-500" id="sumCostA">$0</td>
-                            <td class="px-4 py-3 text-red-500" id="sumCostB">$0</td>
+                            <td class="px-4 py-3 text-red-500" id="sumCostA">₼0</td>
+                            <td class="px-4 py-3 text-red-500" id="sumCostB">₼0</td>
                             <td class="px-4 py-3 text-xs" id="sumCostDiff">-</td>
                         </tr>
                         <tr class="bg-white">
                             <td class="px-4 py-3 font-medium text-gray-900" data-i18n="net_profit">Net Profit</td>
-                            <td class="px-4 py-3 text-lg font-bold" id="sumProfitA">$0</td>
-                            <td class="px-4 py-3 text-lg font-bold" id="sumProfitB">$0</td>
+                            <td class="px-4 py-3 text-lg font-bold" id="sumProfitA">₼0</td>
+                            <td class="px-4 py-3 text-lg font-bold" id="sumProfitB">₼0</td>
                             <td class="px-4 py-3 font-bold" id="sumProfitDiff">-</td>
                         </tr>
                         <tr class="bg-gray-50">
@@ -567,6 +629,18 @@
                             <td class="px-4 py-3 text-xs" id="sumWeightDiff">-</td>
                         </tr>
                         <tr class="bg-gray-50">
+                            <td class="px-4 py-3 font-medium text-gray-900" data-i18n="carcass_weight">Carcass Weight (kg)</td>
+                            <td class="px-4 py-3" id="sumCarcassA">0</td>
+                            <td class="px-4 py-3" id="sumCarcassB">0</td>
+                            <td class="px-4 py-3 text-xs" id="sumCarcassDiff">-</td>
+                        </tr>
+                        <tr class="bg-white">
+                            <td class="px-4 py-3 font-medium text-gray-900" data-i18n="dressing_pct">Dressing %</td>
+                            <td class="px-4 py-3" id="sumDressA">0%</td>
+                            <td class="px-4 py-3" id="sumDressB">0%</td>
+                            <td class="px-4 py-3 text-xs" id="sumDressDiff">-</td>
+                        </tr>
+                        <tr class="bg-gray-50">
                             <td class="px-4 py-3 font-medium text-gray-900" data-i18n="avg_adg">Avg ADG (kg/day)</td>
                             <td class="px-4 py-3" id="sumAdgA">0</td>
                             <td class="px-4 py-3" id="sumAdgB">0</td>
@@ -579,21 +653,33 @@
                             <td class="px-4 py-3 text-xs" id="sumDmiDiff">-</td>
                         </tr>
                         <tr class="bg-gray-50">
-                            <td class="px-4 py-3 font-medium text-gray-900" data-i18n="daily_feed_cost">Daily Feed Cost ($)</td>
-                            <td class="px-4 py-3" id="sumDailyFeedA">$0</td>
-                            <td class="px-4 py-3" id="sumDailyFeedB">$0</td>
+                            <td class="px-4 py-3 font-medium text-gray-900" data-i18n="fcr_full">FCR (kg DM / kg gain)</td>
+                            <td class="px-4 py-3" id="sumFcrA">0</td>
+                            <td class="px-4 py-3" id="sumFcrB">0</td>
+                            <td class="px-4 py-3 text-xs" id="sumFcrDiff">-</td>
+                        </tr>
+                        <tr class="bg-white">
+                            <td class="px-4 py-3 font-medium text-gray-900" data-i18n="cost_kg_gain">Cost per kg gain</td>
+                            <td class="px-4 py-3" id="sumCpkA">0</td>
+                            <td class="px-4 py-3" id="sumCpkB">0</td>
+                            <td class="px-4 py-3 text-xs" id="sumCpkDiff">-</td>
+                        </tr>
+                        <tr class="bg-gray-50">
+                            <td class="px-4 py-3 font-medium text-gray-900" data-i18n="daily_feed_cost">Daily Feed Cost</td>
+                            <td class="px-4 py-3" id="sumDailyFeedA">₼0</td>
+                            <td class="px-4 py-3" id="sumDailyFeedB">₼0</td>
                             <td class="px-4 py-3 text-xs" id="sumDailyFeedDiff">-</td>
                         </tr>
                         <tr class="bg-white">
-                            <td class="px-4 py-3 font-medium text-gray-900" data-i18n="daily_overhead_cost">Daily Overhead Cost ($)</td>
-                            <td class="px-4 py-3" id="sumDailyOverheadA">$0</td>
-                            <td class="px-4 py-3" id="sumDailyOverheadB">$0</td>
+                            <td class="px-4 py-3 font-medium text-gray-900" data-i18n="daily_overhead_cost">Daily Overhead Cost</td>
+                            <td class="px-4 py-3" id="sumDailyOverheadA">₼0</td>
+                            <td class="px-4 py-3" id="sumDailyOverheadB">₼0</td>
                             <td class="px-4 py-3 text-xs" id="sumDailyOverheadDiff">-</td>
                         </tr>
                         <tr class="bg-gray-50">
-                            <td class="px-4 py-3 font-medium text-gray-900" data-i18n="avg_cost_day">Avg Cost/Day ($)</td>
-                            <td class="px-4 py-3" id="sumDailyCostA">$0</td>
-                            <td class="px-4 py-3" id="sumDailyCostB">$0</td>
+                            <td class="px-4 py-3 font-medium text-gray-900" data-i18n="avg_cost_day">Avg Cost/Day</td>
+                            <td class="px-4 py-3" id="sumDailyCostA">₼0</td>
+                            <td class="px-4 py-3" id="sumDailyCostB">₼0</td>
                             <td class="px-4 py-3 text-xs" id="sumDailyCostDiff">-</td>
                         </tr>
                     </tbody>
@@ -616,7 +702,7 @@
                 <h3 class="text-lg font-bold text-gray-700 mb-4" data-i18n="cost_breakdown">Detailed Costs</h3>
                 <table class="w-full text-sm text-left text-gray-500">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                        <tr><th class="px-4 py-2">Category</th><th class="px-4 py-2 text-blue-600">A</th><th class="px-4 py-2 text-purple-600">B</th></tr>
+                        <tr><th class="px-4 py-2" data-i18n="category">Category</th><th class="px-4 py-2 text-blue-600">A</th><th class="px-4 py-2 text-purple-600">B</th></tr>
                     </thead>
                     <tbody>
                         <tr class="bg-white border-b"><td class="px-4 py-2" data-i18n="initial_cost">Initial Cost (Calf/Import)</td><td class="px-4 py-2" id="bdCalfA">-</td><td class="px-4 py-2" id="bdCalfB">-</td></tr>
@@ -624,6 +710,7 @@
                         <tr class="bg-white border-b"><td class="px-4 py-2" data-i18n="overheads">Overheads</td><td class="px-4 py-2" id="bdOverheadA">-</td><td class="px-4 py-2" id="bdOverheadB">-</td></tr>
                         <tr class="bg-gray-50 border-b"><td class="px-4 py-2" data-i18n="semen_breeding">Semen / Breeding</td><td class="px-4 py-2" id="bdSemenA">-</td><td class="px-4 py-2" id="bdSemenB">-</td></tr>
                         <tr class="bg-white border-b"><td class="px-4 py-2" data-i18n="interest_cost">Interest Cost</td><td class="px-4 py-2" id="bdInterestA">-</td><td class="px-4 py-2" id="bdInterestB">-</td></tr>
+                        <tr class="bg-gray-50 border-b"><td class="px-4 py-2" data-i18n="mortality_cost">Mortality Reserve</td><td class="px-4 py-2" id="bdMortA">-</td><td class="px-4 py-2" id="bdMortB">-</td></tr>
                         <tr class="bg-blue-50 font-bold"><td class="px-4 py-2" data-i18n="total_cost_upper">TOTAL COST</td><td class="px-4 py-2 text-blue-700" id="bdTotalA">-</td><td class="px-4 py-2 text-purple-700" id="bdTotalB">-</td></tr>
                     </tbody>
                 </table>
@@ -633,50 +720,255 @@
     </div>
 
     <script>
-        // --- TRANSLATIONS (Updated to include V2 keys) ---
+        // ================================================================
+        // Cattle Profit Calculator V5.0
+        // Data sourced from: ADG Bulls By Breed_updated V2 290426.xlsx
+        // 8 breeds × 24-month ADG/DMI tables; AZN economics defaults from
+        // "Breed Economics" sheet (Azerbaijan dairy farm).
+        // ================================================================
+
+        // --- TRANSLATIONS ---
         const translations = {
-            en: { title_main: "Cattle Profit Calculator", global_assumptions: "Global Assumptions", calf_cost: "Calf Cost", interest_rate: "Interest Rate (%)", overhead_bull: "Overhead Bull (%)", overhead_heifer: "Overhead Heifer (%)", scenario_a: "Scenario A", scenario_b: "Scenario B", bull: "Bull", heifer: "Heifer", source: "Source", farm_born: "Farm Born", imported: "Imported", breed: "Breed", feeding_strategy: "Feeding Strategy", target_age: "Target Age", meat_price: "Meat Price", net_profit: "Net Profit", roi: "ROI", summary_title: "Performance Summary Comparison", financial_chart: "Financial Comparison", growth_chart: "Growth Curve", cost_breakdown: "Cost Breakdown", wins: "Scenario {win} wins by {sym}{amount}", end_growing_age: "End Growing (mo)", total_revenue: "Total Income (Revenue)", total_cost: "Total Cost", final_weight: "Final Weight", avg_adg: "Avg ADG (kg/day)", final_dmi: "Final DMI (kg/day)", daily_feed_cost: "Daily Feed Cost", daily_overhead_cost: "Daily Overhead Cost", avg_cost_day: "Avg Cost/Day", initial_cost: "Initial Cost (Calf/Import)", feed_cost: "Total Feed Cost", overheads: "Overheads", semen_breeding: "Semen / Breeding", interest_cost: "Interest Cost", total_cost_upper: "TOTAL COST", metric: "Metric", diff: "Diff (A-B)" },
-            az: { title_main: "Mal-Qara Kalkulyatoru", global_assumptions: "Qlobal Fərziyyələr", calf_cost: "Dana Dəyəri", interest_rate: "Faiz Dərəcəsi", overhead_bull: "Əlavə Xərc Buğa", overhead_heifer: "Əlavə Xərc Düyə", scenario_a: "Ssenari A", scenario_b: "Ssenari B", bull: "Buğa", heifer: "Düyə", source: "Mənbə", farm_born: "Ferma", imported: "İdxal", breed: "Cins", feeding_strategy: "Yemləmə", target_age: "Hədəf Yaş", meat_price: "Ət Qiyməti", net_profit: "Xalis Mənfəət", roi: "ROI", summary_title: "Yekun Müqayisə", financial_chart: "Maliyyə", growth_chart: "Böyümə", cost_breakdown: "Xərclər", wins: "Ssenari {win} qalib gəlir: {sym}{amount}", end_growing_age: "Böyütmə Sonu (ay)", total_revenue: "Ümumi Gəlir", total_cost: "Ümumi Xərc", final_weight: "Son Çəki", avg_adg: "Orta GÇA (kq/gün)", final_dmi: "Son DMI (kq/gün)", daily_feed_cost: "Günlük Yem Xərci", daily_overhead_cost: "Günlük Əlavə Xərc", avg_cost_day: "Orta Xərc/Gün", initial_cost: "İlkin Dəyər", feed_cost: "Yem Xərci", overheads: "Əlavə Xərclər", semen_breeding: "Toxum / Damazlıq", interest_cost: "Faiz Xərci", total_cost_upper: "CƏMİ XƏRC", metric: "Göstərici", diff: "Fərq" },
-            ru: { title_main: "Калькулятор КРС", global_assumptions: "Общие", calf_cost: "Теленок", interest_rate: "Ставка (%)", overhead_bull: "Накладные Бык", overhead_heifer: "Накладные Телка", scenario_a: "Сценарий A", scenario_b: "Сценарий B", bull: "Бык", heifer: "Телка", source: "Источник", farm_born: "Ферма", imported: "Импорт", breed: "Порода", feeding_strategy: "Кормление", target_age: "Возраст", meat_price: "Мясо", net_profit: "Прибыль", roi: "ROI", summary_title: "Сводка", financial_chart: "Финансы", growth_chart: "Рост", cost_breakdown: "Расходы", wins: "Сценарий {win} на {sym}{amount}", end_growing_age: "Конец Роста (мес)", total_revenue: "Общий Доход", total_cost: "Общие Затраты", final_weight: "Финальный Вес", avg_adg: "Ср. Привес (кг/день)", final_dmi: "Фин. Потр. (кг/день)", daily_feed_cost: "Корм/День", daily_overhead_cost: "Накладные/День", avg_cost_day: "Ср. Затраты/День", initial_cost: "Нач. Стоимость", feed_cost: "Стоимость Корма", overheads: "Накладные", semen_breeding: "Семя / Разведение", interest_cost: "Проценты", total_cost_upper: "ИТОГО", metric: "Показатель", diff: "Разница" }
+            en: {
+                title_main: "Cattle Profit Calculator",
+                global_assumptions: "Global Assumptions",
+                calf_cost: "Calf Cost",
+                interest_rate: "Interest Rate (%)",
+                overhead_bull: "Overhead Bull (%)",
+                overhead_heifer: "Overhead Heifer (%)",
+                mortality_pct: "Mortality (% of total)",
+                birth_weight: "Birth Weight (kg)",
+                scenario_a: "Scenario A",
+                scenario_b: "Scenario B",
+                bull: "Bull", heifer: "Heifer",
+                source: "Source", farm_born: "Farm Born", imported: "Imported",
+                breed: "Breed",
+                feeding_strategy: "Feeding Strategy",
+                starter: "Starter", end_age_starter: "End Age (mo)",
+                grow_phase: "Grow", end_growing_age: "End Growing (mo)",
+                fatten_phase: "Fatten", heifer_feed: "Heifer Feed",
+                weight_kg: "Weight (kg)", age_mo: "Age (mo)", price_per_kg: "Price (per kg)",
+                target_age: "Target Age",
+                sale_method: "Sale Method", live_weight: "Live Weight", carcass: "Carcass",
+                live_price: "Live Price", carcass_price: "Carcass Price",
+                sale_price: "Sale", semen: "Semen",
+                results: "Results",
+                net_profit: "Net Profit", roi: "ROI",
+                final_weight: "Final Weight", total_cost: "Total Cost",
+                avg_adg_short: "Avg ADG", dmi_short: "DMI", cost_day_short: "Cost/Day",
+                dressing_short: "Dressing", fcr_short: "FCR", cost_kg_gain_short: "Cost/kg gain",
+                summary_title: "Performance Summary Comparison",
+                financial_chart: "Financials", growth_chart: "Growth Curve", cost_breakdown: "Cost Breakdown",
+                wins: "Scenario {win} wins by {sym}{amount}",
+                total_revenue: "Total Income (Revenue)",
+                avg_adg: "Avg ADG (kg/day)", final_dmi: "Final DMI (kg/day)",
+                fcr_full: "FCR (kg DM / kg gain)", cost_kg_gain: "Cost per kg gain",
+                carcass_weight: "Carcass Weight (kg)", dressing_pct: "Dressing %",
+                daily_feed_cost: "Daily Feed Cost", daily_overhead_cost: "Daily Overhead Cost", avg_cost_day: "Avg Cost/Day",
+                category: "Category", initial_cost: "Initial Cost (Calf/Import)",
+                feed_cost: "Total Feed Cost", overheads: "Overheads", semen_breeding: "Semen / Breeding",
+                interest_cost: "Interest Cost", mortality_cost: "Mortality Reserve", total_cost_upper: "TOTAL COST",
+                metric: "Metric", diff: "Diff (A-B)",
+                compare_toggle: "Compare with Scenario B",
+                offline: "Offline", settings: "Settings", changes_saved: "Changes Saved",
+                app_settings: "App Settings", sheet_connection: "Google Sheet Connection",
+                sheet_help: "Paste your Apps Script Web App URL here.", test_btn: "Test",
+                sheet_note: 'Note: Ensure script is deployed as "Anyone" (Anonymous)',
+                currency_label: "Currency", reset_all: "Reset All Data", cancel: "Cancel", save_connect: "Save & Connect",
+                add_new_breed: "Add New Breed", breed_name: "Breed Name", breed_category: "Category",
+                cat_dairy: "Dairy (Holstein-type)", cat_cross: "Dairy × Beef Cross", cat_beef: "Pure Beef",
+                paste_24_adg: "Paste 24 values (Month 1–24)", paste_24_dmi: "Paste 24 values (Month 1–24)",
+                quick_templates: "Quick Templates", tpl_high: "High Performance", tpl_avg: "Average",
+                save_breed: "Save Breed", new_breed: "New Breed", save_sheet: "Save"
+            },
+            ru: {
+                title_main: "Калькулятор Прибыли КРС",
+                global_assumptions: "Общие Параметры",
+                calf_cost: "Стоимость Теленка",
+                interest_rate: "Процентная Ставка (%)",
+                overhead_bull: "Накладные Бык (%)",
+                overhead_heifer: "Накладные Тёлка (%)",
+                mortality_pct: "Падёж (% от итого)",
+                birth_weight: "Вес при Рождении (кг)",
+                scenario_a: "Сценарий A",
+                scenario_b: "Сценарий B",
+                bull: "Бык", heifer: "Тёлка",
+                source: "Источник", farm_born: "Ферма", imported: "Импорт",
+                breed: "Порода",
+                feeding_strategy: "Стратегия Кормления",
+                starter: "Стартер", end_age_starter: "Конец (мес)",
+                grow_phase: "Рост", end_growing_age: "Конец Роста (мес)",
+                fatten_phase: "Откорм", heifer_feed: "Корм Тёлки",
+                weight_kg: "Вес (кг)", age_mo: "Возраст (мес)", price_per_kg: "Цена (за кг)",
+                target_age: "Целевой Возраст",
+                sale_method: "Метод Продажи", live_weight: "Живой Вес", carcass: "Туша",
+                live_price: "Цена Живого Веса", carcass_price: "Цена Туши",
+                sale_price: "Продажа", semen: "Семя",
+                results: "Результаты",
+                net_profit: "Чистая Прибыль", roi: "ROI",
+                final_weight: "Финальный Вес", total_cost: "Общие Затраты",
+                avg_adg_short: "Ср. Привес", dmi_short: "DMI", cost_day_short: "Затр/день",
+                dressing_short: "Убойн. %", fcr_short: "FCR", cost_kg_gain_short: "Цена/кг прир.",
+                summary_title: "Сводка Эффективности",
+                financial_chart: "Финансы", growth_chart: "Кривая Роста", cost_breakdown: "Расходы",
+                wins: "Сценарий {win} выигрывает на {sym}{amount}",
+                total_revenue: "Общий Доход",
+                avg_adg: "Ср. Привес (кг/день)", final_dmi: "Финальный DMI (кг/день)",
+                fcr_full: "FCR (кг СВ / кг прироста)", cost_kg_gain: "Цена за кг прироста",
+                carcass_weight: "Вес Туши (кг)", dressing_pct: "Убойный Выход %",
+                daily_feed_cost: "Корм/День", daily_overhead_cost: "Накладные/День", avg_cost_day: "Ср. Затраты/День",
+                category: "Категория", initial_cost: "Начальная Стоимость",
+                feed_cost: "Стоимость Корма", overheads: "Накладные", semen_breeding: "Семя / Разведение",
+                interest_cost: "Проценты", mortality_cost: "Резерв Падежа", total_cost_upper: "ИТОГО",
+                metric: "Показатель", diff: "Разница (A-B)",
+                compare_toggle: "Сравнить со Сценарием B",
+                offline: "Офлайн", settings: "Настройки", changes_saved: "Сохранено",
+                app_settings: "Настройки Приложения", sheet_connection: "Подключение Google Sheet",
+                sheet_help: "Вставьте URL вашего Apps Script Web App.", test_btn: "Тест",
+                sheet_note: 'Примечание: скрипт должен быть развернут для "Anyone".',
+                currency_label: "Валюта", reset_all: "Сбросить Всё", cancel: "Отмена", save_connect: "Сохранить и Подключить",
+                add_new_breed: "Добавить Породу", breed_name: "Название Породы", breed_category: "Категория",
+                cat_dairy: "Молочная (Голштинская)", cat_cross: "Молочно-Мясная Помесь", cat_beef: "Чисто Мясная",
+                paste_24_adg: "Вставьте 24 значения (мес 1–24)", paste_24_dmi: "Вставьте 24 значения (мес 1–24)",
+                quick_templates: "Шаблоны", tpl_high: "Высокий Прирост", tpl_avg: "Средний",
+                save_breed: "Сохранить", new_breed: "Новая Порода", save_sheet: "Сохранить"
+            },
+            az: {
+                title_main: "Mal-Qara Kalkulyatoru",
+                global_assumptions: "Qlobal Fərziyyələr",
+                calf_cost: "Dana Dəyəri", interest_rate: "Faiz Dərəcəsi (%)",
+                overhead_bull: "Əlavə Xərc Buğa (%)", overhead_heifer: "Əlavə Xərc Düyə (%)",
+                mortality_pct: "Tələfat (%)", birth_weight: "Doğum Çəkisi (kq)",
+                scenario_a: "Ssenari A", scenario_b: "Ssenari B",
+                bull: "Buğa", heifer: "Düyə",
+                source: "Mənbə", farm_born: "Ferma", imported: "İdxal",
+                breed: "Cins", feeding_strategy: "Yemləmə",
+                starter: "Starter", end_age_starter: "Son Yaş (ay)",
+                grow_phase: "Böyütmə", end_growing_age: "Böyütmə Sonu (ay)",
+                fatten_phase: "Yağlandırma", heifer_feed: "Düyə Yemi",
+                weight_kg: "Çəki (kq)", age_mo: "Yaş (ay)", price_per_kg: "Qiymət (kq)",
+                target_age: "Hədəf Yaş",
+                sale_method: "Satış Üsulu", live_weight: "Diri Çəki", carcass: "Cəsəd",
+                live_price: "Diri Çəki Qiyməti", carcass_price: "Cəsəd Qiyməti",
+                sale_price: "Satış", semen: "Toxum",
+                results: "Nəticələr",
+                net_profit: "Xalis Mənfəət", roi: "ROI",
+                final_weight: "Son Çəki", total_cost: "Cəmi Xərc",
+                avg_adg_short: "Orta GÇA", dmi_short: "DMI", cost_day_short: "Xərc/Gün",
+                dressing_short: "Çıxım", fcr_short: "FCR", cost_kg_gain_short: "Xərc/kq",
+                summary_title: "Yekun Müqayisə",
+                financial_chart: "Maliyyə", growth_chart: "Böyümə", cost_breakdown: "Xərclər",
+                wins: "Ssenari {win} qalib gəlir: {sym}{amount}",
+                total_revenue: "Ümumi Gəlir",
+                avg_adg: "Orta GÇA (kq/gün)", final_dmi: "Son DMI (kq/gün)",
+                fcr_full: "FCR (kq KM / kq artım)", cost_kg_gain: "Hər kq artıma xərc",
+                carcass_weight: "Cəsəd Çəkisi (kq)", dressing_pct: "Cəsəd Çıxımı %",
+                daily_feed_cost: "Günlük Yem", daily_overhead_cost: "Günlük Əlavə", avg_cost_day: "Orta Xərc/Gün",
+                category: "Kateqoriya", initial_cost: "İlkin Dəyər",
+                feed_cost: "Yem Xərci", overheads: "Əlavə Xərclər", semen_breeding: "Toxum / Damazlıq",
+                interest_cost: "Faiz", mortality_cost: "Tələfat Ehtiyatı", total_cost_upper: "CƏMİ",
+                metric: "Göstərici", diff: "Fərq",
+                compare_toggle: "Ssenari B ilə Müqayisə",
+                offline: "Offline", settings: "Tənzimləmələr", changes_saved: "Yadda Saxlandı",
+                app_settings: "Tətbiq Tənzimləmələri", sheet_connection: "Google Sheet Bağlantısı",
+                sheet_help: "Apps Script Web App URL-ni daxil edin.", test_btn: "Test",
+                sheet_note: '',
+                currency_label: "Valyuta", reset_all: "Hamısını Sıfırla", cancel: "İmtina", save_connect: "Yadda Saxla",
+                add_new_breed: "Yeni Cins", breed_name: "Cins Adı", breed_category: "Kateqoriya",
+                cat_dairy: "Süd (Holşteyn tipli)", cat_cross: "Süd × Ət Çarpazı", cat_beef: "Saf Ət",
+                paste_24_adg: "24 dəyər (Ay 1–24)", paste_24_dmi: "24 dəyər (Ay 1–24)",
+                quick_templates: "Şablonlar", tpl_high: "Yüksək", tpl_avg: "Orta",
+                save_breed: "Saxla", new_breed: "Yeni Cins", save_sheet: "Saxla"
+            }
         };
 
-        // --- DATA & STATE ---
-        let currentLang = 'en';
-        let webAppUrl = localStorage.getItem('bulls_calculator_url') || "";
-        let currencySymbol = localStorage.getItem('bulls_currency') || "$";
-        
+        // --- BREED DATA (24-month ADG g/day + DMI kg/day, from V2 290426 Excel) ---
+        // category drives dressing %: dairy / cross / beef
         let breedsData = {
-            "Angus/Hereford Cross": { adg: [720, 750, 850, 1000, 1080, 1160, 1230, 1290, 1325, 1350, 1300, 1250, 1200, 1150, 1100, 1050, 1000, 950], dmi: [1.8, 2.72, 3.64, 4.56, 5.48, 6.41, 7.33, 8.25, 8.69, 9.1, 9.5, 10.0, 10.5, 11.0, 11.5, 12.0, 12.5, 13.0] },
-            "Pure Holstein": { adg: [730, 830, 1000, 1170, 1230, 1270, 1330, 1400, 1450, 1450, 1400, 1330, 1330, 1270, 1230, 1170, 1130, 1030], dmi: [2.15, 3.17, 4.19, 5.21, 6.23, 7.25, 8.26, 9.29, 10.31, 11.33, 12.35, 13.37, 14.39, 15.40, 16.43, 17.5, 18.5, 19.5] },
-            "Holstein x Angus Cross": { adg: [750, 800, 900, 1050, 1150, 1250, 1320, 1380, 1420, 1450, 1400, 1350, 1300, 1250, 1200, 1150, 1100, 1050], dmi: [2.08, 3.05, 4.03, 5.0, 5.98, 6.95, 7.93, 8.9, 9.88, 10.8, 11.8, 12.8, 13.8, 14.8, 15.8, 16.8, 17.8, 18.8] },
-            "Holstein x Belgian Blue Cross": { adg: [800, 880, 1000, 1150, 1280, 1400, 1500, 1580, 1650, 1700, 1680, 1650, 1600, 1550, 1500, 1450, 1400, 1350], dmi: [2.26, 3.37, 4.48, 5.59, 6.7, 7.81, 8.92, 10.03, 11.1, 12.2, 13.3, 14.4, 15.5, 16.6, 17.7, 18.8, 19.9, 21.0] },
-            "Pure Angus": { adg: [850, 950, 1050, 1180, 1280, 1380, 1450, 1520, 1550, 1580, 1550, 1500, 1450, 1400, 1350, 1300, 1250, 1200], dmi: [2.04, 2.98, 3.91, 4.85, 5.79, 6.72, 7.66, 8.6, 9.54, 10.48, 11.42, 12.36, 13.3, 14.24, 15.18, 16.12, 17.06, 18.0] },
-            "Pure Limousin": { adg: [870, 980, 1100, 1230, 1340, 1450, 1540, 1620, 1680, 1700, 1650, 1600, 1550, 1500, 1450, 1400, 1350, 1300], dmi: [1.52, 2.43, 3.32, 4.23, 5.12, 6.02, 6.93, 7.82, 8.7, 9.5, 10.3, 11.1, 11.9, 12.7, 13.5, 14.3, 15.1, 15.9] },
-            "Pure Charolais": { adg: [900, 1020, 1150, 1300, 1420, 1550, 1650, 1750, 1800, 1850, 1800, 1750, 1700, 1650, 1600, 1550, 1500, 1450], dmi: [2.18, 3.22, 4.28, 5.32, 6.38, 7.43, 8.48, 9.52, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5, 17.5, 18.5, 19.5] },
-            "Pure Simmental": { adg: [890, 1000, 1130, 1280, 1400, 1520, 1620, 1720, 1780, 1800, 1750, 1700, 1650, 1600, 1550, 1500, 1450, 1400], dmi: [2.15, 3.18, 4.25, 5.28, 6.32, 7.38, 8.42, 9.45, 10.4, 11.35, 12.3, 13.25, 14.2, 15.15, 16.1, 17.05, 18.0, 18.95] }
+            "Angus/Hereford Cross": {
+                category: "cross",
+                adg: [720,750,850,1000,1080,1160,1230,1290,1325,1360,1395,1430,1465,1500,1535,1570,1605,1635,1585,1535,1485,1435,1355,1275],
+                dmi: [1.80,2.72,3.64,4.56,5.48,6.41,7.33,8.25,8.69,9.12,9.56,10.00,10.64,11.29,11.93,12.57,13.21,13.86,14.50,15.20,15.90,16.60,17.30,18.00]
+            },
+            "Pure Holstein": {
+                category: "dairy",
+                adg: [730,830,1000,1170,1230,1270,1330,1400,1430,1430,1400,1330,1350,1270,1230,1170,1130,1030,1000,1000,1000,1000,1000,1000],
+                dmi: [2.15,3.17,4.19,5.21,6.23,7.25,8.26,9.29,10.31,11.33,12.35,13.37,14.39,15.40,16.43,17.45,18.46,19.49,20.51,21.53,22.54,23.57,24.59,25.61]
+            },
+            "Holstein x Angus Cross": {
+                category: "cross",
+                adg: [750,800,900,1050,1150,1250,1320,1380,1430,1480,1520,1550,1580,1600,1610,1600,1580,1550,1500,1450,1400,1350,1300,1250],
+                dmi: [2.08,3.05,4.03,5.00,5.98,6.95,7.93,8.90,9.88,10.85,11.82,12.80,13.78,14.75,15.73,16.70,17.68,18.65,19.62,20.60,21.58,22.55,23.52,24.50]
+            },
+            "Holstein x Belgian Blue Cross": {
+                category: "cross",
+                adg: [800,880,1000,1150,1280,1400,1500,1580,1650,1700,1750,1780,1800,1820,1830,1810,1780,1750,1700,1650,1600,1550,1500,1450],
+                dmi: [2.26,3.37,4.48,5.59,6.70,7.81,8.92,10.03,11.14,12.25,13.36,14.47,15.58,16.69,17.80,18.91,20.02,21.13,22.24,23.35,24.46,25.57,26.68,27.79]
+            },
+            "Pure Angus": {
+                category: "beef",
+                adg: [850,950,1050,1180,1280,1380,1450,1520,1580,1620,1650,1680,1700,1710,1700,1680,1650,1600,1550,1500,1450,1400,1350,1300],
+                dmi: [2.04,2.98,3.91,4.85,5.79,6.72,7.66,8.60,9.54,10.48,11.41,12.35,13.29,14.23,15.16,16.10,17.04,17.98,18.91,19.85,20.79,21.72,22.66,23.60]
+            },
+            "Pure Limousin": {
+                category: "beef",
+                adg: [870,980,1100,1230,1340,1450,1540,1620,1680,1730,1760,1780,1800,1810,1800,1780,1750,1700,1650,1600,1550,1500,1450,1400],
+                dmi: [1.52,2.43,3.32,4.23,5.12,6.02,6.93,7.82,8.72,9.62,10.52,11.42,12.32,13.23,14.12,15.02,15.92,16.82,17.73,18.62,19.53,20.42,21.33,22.22]
+            },
+            "Pure Charolais": {
+                category: "beef",
+                adg: [900,1020,1150,1300,1420,1550,1650,1750,1820,1880,1920,1950,1960,1950,1920,1880,1840,1780,1720,1660,1600,1550,1500,1450],
+                dmi: [2.18,3.22,4.28,5.32,6.38,7.43,8.48,9.52,10.58,11.62,12.68,13.73,14.78,15.82,16.88,17.92,18.98,20.03,21.08,22.12,23.18,24.22,25.28,26.33]
+            },
+            "Pure Simmental": {
+                category: "beef",
+                adg: [890,1000,1130,1280,1400,1520,1620,1720,1790,1850,1890,1920,1930,1920,1890,1850,1800,1750,1690,1630,1580,1520,1480,1420],
+                dmi: [2.15,3.18,4.25,5.28,6.32,7.38,8.42,9.45,10.50,11.55,12.60,13.65,14.70,15.75,16.80,17.85,18.90,19.95,21.00,22.05,23.10,24.15,25.20,26.25]
+            }
         };
+
+        // Dressing % by category and age (linear interpolation between anchor months 12/15/18; clamp outside).
+        // Source: Breed Economics sheet, with extrapolation for ages outside 12-18.
+        function getDressingPct(category, ageMonths) {
+            const anchors = {
+                dairy: [[10, 0.50], [12, 0.52], [15, 0.54], [18, 0.55], [21, 0.56], [24, 0.56]],
+                cross: [[10, 0.52], [12, 0.54], [15, 0.56], [18, 0.58], [21, 0.595], [24, 0.60]],
+                beef:  [[10, 0.54], [12, 0.56], [15, 0.58], [18, 0.60], [21, 0.61], [24, 0.61]]
+            };
+            const list = anchors[category] || anchors.cross;
+            if (ageMonths <= list[0][0]) return list[0][1];
+            if (ageMonths >= list[list.length-1][0]) return list[list.length-1][1];
+            for (let i = 0; i < list.length - 1; i++) {
+                const [a1, v1] = list[i], [a2, v2] = list[i+1];
+                if (ageMonths >= a1 && ageMonths <= a2) {
+                    return v1 + (v2 - v1) * (ageMonths - a1) / (a2 - a1);
+                }
+            }
+            return list[list.length-1][1];
+        }
+
+        // --- DATA & STATE ---
+        let currentLang = localStorage.getItem('bulls_lang') || 'en';
+        let webAppUrl = localStorage.getItem('bulls_calculator_url') || "";
+        let currencySymbol = localStorage.getItem('bulls_currency') || "₼";
 
         let state = {
             isCompare: true,
-            A: { type: 'bull', source: 'farm', lastResult: null },
-            B: { type: 'bull', source: 'import', lastResult: null }
+            A: { type: 'bull', source: 'farm', sale: 'live', lastResult: null },
+            B: { type: 'bull', source: 'farm', sale: 'live', lastResult: null }
         };
         let growthChart, financialChart;
 
         // --- INITIALIZATION ---
         window.onload = function() {
-            // 1. Initialize charts FIRST to avoid "undefined" errors
             initCharts();
-
-            // 2. Load persisted data
             loadState();
-
-            // 3. Populate defaults and UI
             populateBreeds();
             updateCurrencyUI();
-            
-            // 4. Try to sync if URL exists
-            if(webAppUrl) {
+            document.getElementById('langSelector').value = currentLang;
+            changeLanguage(currentLang);
+
+            if (webAppUrl) {
                 document.getElementById('webAppUrlInput').value = webAppUrl;
                 updateConnectionStatus(true);
                 syncBreeds();
@@ -690,16 +982,14 @@
         function saveState() {
             const inputs = document.querySelectorAll('input, select');
             inputs.forEach(el => {
-                // Don't save transient UI states like modal inputs or connection details (except URL handled separately)
-                if(el.id && !el.id.startsWith('newBreed') && el.id !== 'webAppUrlInput' && el.type !== 'file') {
+                if (el.id && !el.id.startsWith('newBreed') && el.id !== 'webAppUrlInput' && el.type !== 'file') {
                     if (el.type === 'checkbox' || el.type === 'radio') {
-                        if (el.checked) localStorage.setItem('bc_v4_' + el.name, el.value);
+                        if (el.checked) localStorage.setItem('bc_v5_' + el.name, el.value);
                     } else {
-                        localStorage.setItem('bc_v4_' + el.id, el.value);
+                        localStorage.setItem('bc_v5_' + el.id, el.value);
                     }
                 }
             });
-            // Show indicator
             const ind = document.getElementById('saveIndicator');
             ind.style.opacity = '1';
             setTimeout(() => ind.style.opacity = '0', 1000);
@@ -708,61 +998,55 @@
         function loadState() {
             const inputs = document.querySelectorAll('input, select');
             inputs.forEach(el => {
-                if(el.id && !el.id.startsWith('newBreed') && el.id !== 'webAppUrlInput' && el.type !== 'file') {
-                    // Handle Radios
+                if (el.id && !el.id.startsWith('newBreed') && el.id !== 'webAppUrlInput' && el.type !== 'file') {
                     if (el.type === 'radio') {
-                        const val = localStorage.getItem('bc_v4_' + el.name);
+                        const val = localStorage.getItem('bc_v5_' + el.name);
                         if (val && el.value === val) el.checked = true;
-                    } 
-                    // Handle Checkboxes
-                    else if (el.type === 'checkbox') {
-                       // Custom handling for compareToggle if needed, but it's simpler to just let logic run
-                       // For now, simple value restoration:
-                    }
-                    // Handle Text/Number/Select
-                    else {
-                        const val = localStorage.getItem('bc_v4_' + el.id);
+                    } else if (el.type !== 'checkbox') {
+                        const val = localStorage.getItem('bc_v5_' + el.id);
                         if (val !== null) el.value = val;
                     }
                 }
             });
-            
-            // Restore Compare Toggle State specifically
-            const comp = localStorage.getItem('bc_v4_compareToggle');
-            if (comp !== null) {
-                // This input doesn't have a value per se, just checked status. 
-                // We actually need to save checked status for the toggle specifically.
-                // Or simplified: Just rely on default open for now to ensure visibility.
-            }
+            // Restore sale-mode state
+            ['A','B'].forEach(s => {
+                const sale = document.querySelector(`input[name="sale${s}"]:checked`);
+                if (sale) state[s].sale = sale.value;
+                const src = document.querySelector(`input[name="source${s}"]:checked`);
+                if (src) state[s].source = src.value;
+                const t = localStorage.getItem('bc_v5_type'+s);
+                if (t) state[s].type = t;
+            });
         }
 
         function onInputChange() {
             saveState();
             updateCalculations();
         }
-        
+
         function resetToDefaults() {
-            if(confirm("Are you sure? This will erase all your saved numbers.")) {
-                localStorage.clear();
+            if (confirm("Are you sure? This will erase all your saved numbers.")) {
+                Object.keys(localStorage).filter(k => k.startsWith('bc_v5_') || k.startsWith('bulls_')).forEach(k => localStorage.removeItem(k));
                 location.reload();
             }
         }
 
-        // --- SHEET CONNECTION LOGIC ---
+        // --- SHEET CONNECTION ---
         function updateConnectionStatus(connected) {
             const el = document.getElementById('connectionStatus');
-            if(connected) {
+            const t = translations[currentLang];
+            if (connected) {
                 el.innerHTML = '<i class="fas fa-check-circle mr-1 text-green-600"></i> <span class="hidden sm:inline text-green-700">Connected</span>';
                 el.classList.remove('bg-gray-200', 'text-gray-500'); el.classList.add('bg-green-100', 'border-green-200');
             } else {
-                el.innerHTML = '<i class="fas fa-link mr-1"></i> <span class="hidden sm:inline">Offline</span>';
+                el.innerHTML = '<i class="fas fa-link mr-1"></i> <span class="hidden sm:inline">' + (t.offline || 'Offline') + '</span>';
                 el.classList.remove('bg-green-100', 'border-green-200'); el.classList.add('bg-gray-200', 'text-gray-500');
             }
         }
 
         function openSettingsModal() { document.getElementById('settingsModal').classList.remove('hidden'); }
         function closeSettingsModal() { document.getElementById('settingsModal').classList.add('hidden'); }
-        
+
         function setCurrency(sym) {
             currencySymbol = sym;
             updateCurrencyUI();
@@ -771,7 +1055,7 @@
 
         function updateCurrencyUI() {
             document.querySelectorAll('.currency-btn').forEach(btn => {
-                if(btn.dataset.val === currencySymbol) {
+                if (btn.dataset.val === currencySymbol) {
                     btn.classList.add('bg-blue-100', 'border-blue-400', 'text-blue-800');
                     btn.classList.remove('hover:bg-gray-50');
                 } else {
@@ -785,14 +1069,14 @@
 
         function saveSettings() {
             const url = document.getElementById('webAppUrlInput').value.trim();
-            if(url) {
+            if (url) {
                 webAppUrl = url;
                 localStorage.setItem('bulls_calculator_url', url);
             }
             localStorage.setItem('bulls_currency', currencySymbol);
             updateConnectionStatus(!!url);
             closeSettingsModal();
-            if(url) syncBreeds();
+            if (url) syncBreeds();
             updateCalculations();
         }
 
@@ -801,18 +1085,17 @@
             const resEl = document.getElementById('testResult');
             resEl.classList.remove('hidden', 'text-green-600', 'text-red-600');
             resEl.innerText = "Testing...";
-            
-            if(!url) {
+
+            if (!url) {
                 resEl.innerText = "Please enter a URL first.";
                 resEl.classList.add('text-red-600');
                 return;
             }
 
             try {
-                // Adding a timestamp to prevent caching
                 const response = await fetch(`${url}?action=getBreeds&t=${new Date().getTime()}`);
                 const result = await response.json();
-                if(result.status === "success") {
+                if (result.status === "success") {
                     resEl.innerText = "Success! Connection working.";
                     resEl.classList.add('text-green-600');
                 } else {
@@ -832,33 +1115,33 @@
             try {
                 const response = await fetch(`${webAppUrl}?action=getBreeds`);
                 const result = await response.json();
-                if(result.status === "success") {
+                if (result.status === "success") {
                     breedsData = { ...breedsData, ...result.data };
                     populateBreeds();
                 }
-            } catch (e) { 
+            } catch (e) {
                 console.error("Sync failed", e);
-            } finally { 
-                showLoading(false); 
+            } finally {
+                showLoading(false);
             }
         }
 
         async function saveScenario(scenario) {
-            if(!webAppUrl) { alert("Please connect a Google Sheet in settings first."); openSettingsModal(); return; }
+            if (!webAppUrl) { alert("Please connect a Google Sheet in settings first."); openSettingsModal(); return; }
             const result = state[scenario].lastResult;
-            if(!result) return;
+            if (!result) return;
             showLoading(true);
-            
+
             try {
                 await fetch(webAppUrl, {
                     method: 'POST',
-                    mode: 'no-cors', 
+                    mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ action: 'saveResult', payload: { ...result, breed: document.getElementById(`breed${scenario}`).value } })
                 });
-                alert("Saved to Google Sheet! (Note: Updates may take a few seconds)");
-            } catch (e) { 
-                alert("Error: " + e.message + "\nCheck browser console for more details."); 
+                alert("Saved to Google Sheet!");
+            } catch (e) {
+                alert("Error: " + e.message);
                 console.error("Save Error:", e);
             } finally { showLoading(false); }
         }
@@ -866,33 +1149,37 @@
         // --- BREED MANAGEMENT ---
         function openAddBreedModal() { document.getElementById('addBreedModal').classList.remove('hidden'); }
         function closeAddBreedModal() { document.getElementById('addBreedModal').classList.add('hidden'); }
-        
+
         function fillSampleData(type) {
-            if(type === 'high') {
-                document.getElementById('newBreedADG').value = "800, 900, 1050, 1200, 1350, 1500, 1600, 1650, 1700, 1720, 1700, 1650, 1600, 1550, 1500, 1450, 1400, 1350";
-                document.getElementById('newBreedDMI').value = "2.2, 3.3, 4.4, 5.5, 6.7, 7.8, 8.9, 10.0, 11.1, 12.2, 13.3, 14.4, 15.5, 16.6, 17.7, 18.8, 19.9, 21.0";
+            if (type === 'high') {
+                document.getElementById('newBreedADG').value = "800, 900, 1050, 1200, 1350, 1500, 1600, 1650, 1700, 1750, 1780, 1800, 1810, 1820, 1810, 1790, 1760, 1720, 1670, 1620, 1570, 1520, 1470, 1420";
+                document.getElementById('newBreedDMI').value = "2.2, 3.3, 4.4, 5.5, 6.7, 7.8, 8.9, 10.0, 11.1, 12.2, 13.3, 14.4, 15.5, 16.6, 17.7, 18.8, 19.9, 21.0, 22.1, 23.2, 24.3, 25.4, 26.5, 27.6";
             } else {
-                 document.getElementById('newBreedADG').value = "720, 750, 850, 1000, 1080, 1160, 1230, 1290, 1325, 1350, 1300, 1250, 1200, 1150, 1100, 1050, 1000, 950";
-                 document.getElementById('newBreedDMI').value = "1.8, 2.7, 3.6, 4.5, 5.5, 6.4, 7.3, 8.2, 8.7, 9.1, 9.5, 10.0, 10.5, 11.0, 11.5, 12.0, 12.5, 13.0";
+                document.getElementById('newBreedADG').value = "720, 750, 850, 1000, 1080, 1160, 1230, 1290, 1325, 1360, 1395, 1430, 1465, 1500, 1535, 1570, 1605, 1635, 1585, 1535, 1485, 1435, 1355, 1275";
+                document.getElementById('newBreedDMI').value = "1.8, 2.72, 3.64, 4.56, 5.48, 6.41, 7.33, 8.25, 8.69, 9.12, 9.56, 10.0, 10.64, 11.29, 11.93, 12.57, 13.21, 13.86, 14.5, 15.2, 15.9, 16.6, 17.3, 18";
             }
         }
 
         async function submitNewBreed() {
             const name = document.getElementById('newBreedName').value;
+            const category = document.getElementById('newBreedCategory').value;
             const adg = document.getElementById('newBreedADG').value.split(',').map(n => parseFloat(n));
             const dmi = document.getElementById('newBreedDMI').value.split(',').map(n => parseFloat(n));
-            if(!name || adg.some(isNaN) || dmi.some(isNaN)) { alert("Invalid data"); return; }
+            if (!name || adg.some(isNaN) || dmi.some(isNaN)) { alert("Invalid data"); return; }
+            // Pad to 24 if shorter
+            while (adg.length < 24) adg.push(adg[adg.length-1]);
+            while (dmi.length < 24) dmi.push(dmi[dmi.length-1]);
 
-            breedsData[name] = { adg, dmi };
+            breedsData[name] = { adg, dmi, category };
             populateBreeds();
             closeAddBreedModal();
 
-            if(webAppUrl) {
+            if (webAppUrl) {
                 showLoading(true);
                 try {
                     await fetch(webAppUrl, {
                         method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ action: 'addBreed', payload: { name, adg, dmi } })
+                        body: JSON.stringify({ action: 'addBreed', payload: { name, adg, dmi, category } })
                     });
                     alert("Saved to Sheet!");
                 } catch(e) {} finally { showLoading(false); }
@@ -904,37 +1191,31 @@
         // --- CORE CALCULATOR ---
         function populateBreeds() {
             const selA = document.getElementById('breedA'), selB = document.getElementById('breedB');
-            // Save current selection if possible
             const valA = selA.value, valB = selB.value;
-            
             selA.innerHTML = ''; selB.innerHTML = '';
-            
-            // Populate
-            const breeds = Object.keys(breedsData);
-            if(breeds.length === 0) {
-                 // Fallback if empty (shouldn't happen with defaults, but safe)
-                 selA.add(new Option("Default", "Default"));
-                 selB.add(new Option("Default", "Default"));
-                 return;
-            }
 
-            breeds.forEach(b => { 
-                selA.add(new Option(b, b)); 
-                selB.add(new Option(b, b)); 
+            const breeds = Object.keys(breedsData);
+            breeds.forEach(b => {
+                selA.add(new Option(b, b));
+                selB.add(new Option(b, b));
             });
 
-            // Restore selection or default to first/second
-            if(valA && breedsData[valA]) selA.value = valA;
-            else if (!valA) selA.value = breeds[0];
+            if (valA && breedsData[valA]) selA.value = valA;
+            else selA.value = breeds[0];
 
-            if(valB && breedsData[valB]) selB.value = valB;
-            else if (!valB) selB.value = breeds[1] || breeds[0];
+            if (valB && breedsData[valB]) selB.value = valB;
+            else selB.value = breeds[1] || breeds[0];
         }
 
         function changeLanguage(lang) {
             currentLang = lang;
+            localStorage.setItem('bulls_lang', lang);
             const t = translations[lang];
-            document.querySelectorAll('[data-i18n]').forEach(el => el.innerText = t[el.getAttribute('data-i18n')]);
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key] !== undefined) el.innerText = t[key];
+            });
+            updateConnectionStatus(!!webAppUrl);
             updateCalculations();
         }
 
@@ -948,9 +1229,8 @@
             document.getElementById(`feed-bull-${scen}`).classList.toggle('hidden', !isBull);
             document.getElementById(`feed-heifer-${scen}`).classList.toggle('hidden', isBull);
             document.getElementById(`source-selector-${scen}`).classList.toggle('hidden', !isBull);
-            
-            // Persist the type
-            localStorage.setItem('bc_v4_type'+scen, type);
+
+            localStorage.setItem('bc_v5_type'+scen, type);
             updateCalculations();
         }
 
@@ -960,30 +1240,41 @@
             onInputChange();
         }
 
+        function toggleSale(scen) {
+            state[scen].sale = document.querySelector(`input[name="sale${scen}"]:checked`).value;
+            const isLive = state[scen].sale === 'live';
+            document.getElementById(`livePriceWrap${scen}`).classList.toggle('hidden', !isLive);
+            document.getElementById(`carcassPriceWrap${scen}`).classList.toggle('hidden', isLive);
+            onInputChange();
+        }
+
         function toggleCompare() {
             state.isCompare = document.getElementById('compareToggle').checked;
             document.getElementById('scenarioBContainer').classList.toggle('hidden', !state.isCompare);
-            localStorage.setItem('bc_v4_compareToggle', state.isCompare);
+            localStorage.setItem('bc_v5_compareToggle', state.isCompare);
             updateCalculations();
         }
 
         function calculate(scen) {
-            const type = state[scen].type, source = state[scen].source;
+            const type = state[scen].type, source = state[scen].source, sale = state[scen].sale;
             const breedKey = document.getElementById(`breed${scen}`).value;
-            // Safety check if breed doesn't exist yet
             const data = breedsData[breedKey] || Object.values(breedsData)[0];
-            
+            const category = data.category || 'cross';
+
             const endAge = parseInt(document.getElementById(`age${scen}`).value);
-            
-            let curWeight = 40, curAge = 0, initialInv = parseFloat(document.getElementById('calfCost').value);
-            if(type === 'bull' && source === 'import') {
+            const birthW = parseFloat(document.getElementById('birthWeight').value) || 40;
+
+            let curWeight = birthW, curAge = 0, initialInv = parseFloat(document.getElementById('calfCost').value);
+            let startWeight = birthW;
+            if (type === 'bull' && source === 'import') {
                 curWeight = parseFloat(document.getElementById(`importWeight${scen}`).value);
                 curAge = parseFloat(document.getElementById(`importAge${scen}`).value);
+                startWeight = curWeight;
                 initialInv = curWeight * parseFloat(document.getElementById(`importPrice${scen}`).value);
             }
 
-            let feedCost = 0, wCurve = [], dmiCurve = [];
-            for(let k=0; k<curAge; k++) { wCurve.push(null); dmiCurve.push(null); }
+            let feedCost = 0, totalDM = 0, wCurve = [], dmiCurve = [];
+            for (let k = 0; k < curAge; k++) { wCurve.push(null); dmiCurve.push(null); }
 
             const pStart = parseFloat(document.getElementById(`feedPriceInitial${scen}`).value);
             const ageStartEnd = parseFloat(document.getElementById(`ageStarterEnd${scen}`).value);
@@ -992,52 +1283,72 @@
             const ageBullSwitch = parseFloat(document.getElementById(`ageBullSwitch${scen}`).value);
             const pHeif = parseFloat(document.getElementById(`feedPriceHeifer${scen}`).value);
 
-            for(let i=Math.floor(curAge); i<endAge; i++) {
-                let adg = (data.adg[Math.min(i, data.adg.length-1)] || 1000) * (type === 'heifer' ? 0.9 : 1);
-                let dmi = (type === 'heifer') ? curWeight * 0.025 : (data.dmi[Math.min(i, data.dmi.length-1)] || 8);
-                
-                // Price Logic: Starter -> Growing -> Fattening
+            for (let i = Math.floor(curAge); i < endAge; i++) {
+                const idx = Math.min(i, data.adg.length - 1);
+                let adg = (data.adg[idx] || 1000) * (type === 'heifer' ? 0.9 : 1);
+                let dmi = (type === 'heifer') ? curWeight * 0.025 : (data.dmi[idx] || 8);
+
                 let price = pStart;
                 if (i >= ageStartEnd) {
                     if (type === 'heifer') {
                         price = pHeif;
                     } else {
-                        // Use the user input for switch month instead of hardcoded 12
                         price = (i < ageBullSwitch) ? pGrow : pFat;
                     }
                 }
-                
-                feedCost += dmi * 30.4 * price;
-                curWeight += (adg/1000)*30.4;
-                wCurve.push(curWeight); dmiCurve.push(dmi);
+
+                const monthDM = dmi * 30.4;
+                feedCost += monthDM * price;
+                totalDM += monthDM;
+                curWeight += (adg/1000) * 30.4;
+                wCurve.push(curWeight);
+                dmiCurve.push(dmi);
             }
 
-            const overhead = feedCost * (parseFloat(document.getElementById(type === 'bull' ? 'overheadPctBull' : 'overheadPctHeifer').value)/100);
+            const totalGain = curWeight - startWeight;
+            const overheadPct = parseFloat(document.getElementById(type === 'bull' ? 'overheadPctBull' : 'overheadPctHeifer').value)/100;
+            const overhead = feedCost * overheadPct;
             const semen = type === 'heifer' ? parseFloat(document.getElementById(`semenCost${scen}`).value) : 0;
             const intRate = parseFloat(document.getElementById('interestRate').value)/100;
             const durY = (endAge - curAge)/12;
             const totalInt = (initialInv * intRate * durY) + ((feedCost + overhead + semen) * intRate * durY * 0.5);
-            const totalCost = initialInv + feedCost + overhead + semen + totalInt;
-            
+
+            const subtotal = initialInv + feedCost + overhead + semen + totalInt;
+            const mortPct = parseFloat(document.getElementById('mortalityPct').value)/100 || 0;
+            const mortalityCost = subtotal * mortPct;
+            const totalCost = subtotal + mortalityCost;
+
+            // Revenue
             let rev = 0;
-            if(type === 'heifer') rev = parseFloat(document.getElementById(`heiferPrice${scen}`).value);
-            else rev = curWeight * parseFloat(document.getElementById(`meatPrice${scen}`).value);
+            const dressing = getDressingPct(category, endAge);
+            const carcassWeight = curWeight * dressing;
+            if (type === 'heifer') {
+                rev = parseFloat(document.getElementById(`heiferPrice${scen}`).value);
+            } else if (sale === 'carcass') {
+                rev = carcassWeight * parseFloat(document.getElementById(`carcassPrice${scen}`).value);
+            } else {
+                rev = curWeight * parseFloat(document.getElementById(`meatPrice${scen}`).value);
+            }
 
             const days = (endAge - curAge) * 30.4;
-            const avgAdg = days ? (curWeight - (type==='bull' && source==='import' ? parseFloat(document.getElementById(`importWeight${scen}`).value) : 40))/days : 0;
-            
-            // Additional metrics for Detailed Table
+            const avgAdg = days ? (curWeight - startWeight)/days : 0;
             const avgDailyCost = days ? totalCost/days : 0;
             const avgDailyFeed = days ? feedCost/days : 0;
             const avgDailyOverhead = days ? overhead/days : 0;
+            const fcr = totalGain > 0 ? totalDM / totalGain : 0;
+            const costPerKgGain = totalGain > 0 ? feedCost / totalGain : 0;
 
-            const res = { 
-                profit: rev - totalCost, roi: totalCost ? ((rev-totalCost)/totalCost)*100 : 0, 
-                totalCost, weight: curWeight, avgAdg: avgAdg * 1000, finalDmi: dmiCurve[dmiCurve.length-1] || 0, 
-                wCurve, dmiCurve, 
-                breakdown: { calf: initialInv, feed: feedCost, overhead, semen, interest: totalInt }, 
-                type, source, revenue: rev,
-                avgDailyCost, avgDailyFeed, avgDailyOverhead
+            const res = {
+                profit: rev - totalCost,
+                roi: totalCost ? ((rev-totalCost)/totalCost)*100 : 0,
+                totalCost, weight: curWeight, avgAdg: avgAdg * 1000,
+                finalDmi: dmiCurve[dmiCurve.length-1] || 0,
+                wCurve, dmiCurve,
+                breakdown: { calf: initialInv, feed: feedCost, overhead, semen, interest: totalInt, mortality: mortalityCost },
+                type, source, sale, revenue: rev,
+                avgDailyCost, avgDailyFeed, avgDailyOverhead,
+                dressing, carcassWeight, fcr, costPerKgGain,
+                totalGain, totalDM
             };
             state[scen].lastResult = res;
             return res;
@@ -1048,9 +1359,9 @@
             document.getElementById('ageDisplayB').innerText = document.getElementById('ageB').value + ' mo';
             const rA = calculate('A');
             updateUI('A', rA);
-            
+
             let rB = null;
-            if(state.isCompare) {
+            if (state.isCompare) {
                 rB = calculate('B');
                 updateUI('B', rB);
                 updateDiff(rA, rB);
@@ -1058,36 +1369,47 @@
             updateCharts(rA, rB);
         }
 
+        function fmtMoney(v) { return currencySymbol + (Math.round(v)).toLocaleString(); }
+        function fmtMoney2(v) { return currencySymbol + (v).toFixed(2); }
+
         function updateUI(s, r) {
-            document.getElementById(`kpiProfit${s}`).innerText = currencySymbol + r.profit.toFixed(0);
+            document.getElementById(`kpiProfit${s}`).innerText = fmtMoney(r.profit);
             document.getElementById(`kpiProfit${s}`).className = `text-xl font-bold ${r.profit >= 0 ? 'text-green-600' : 'text-red-600'}`;
             document.getElementById(`kpiROI${s}`).innerText = r.roi.toFixed(1) + '%';
-            document.getElementById(`kpiWeight${s}`).innerText = r.weight.toFixed(0); // Restored
-            document.getElementById(`kpiCost${s}`).innerText = currencySymbol + r.totalCost.toFixed(0); // Restored
-            
+            document.getElementById(`kpiWeight${s}`).innerText = r.weight.toFixed(0);
+            document.getElementById(`kpiCost${s}`).innerText = fmtMoney(r.totalCost);
+
             document.getElementById(`kpiAdg${s}`).innerText = r.avgAdg.toFixed(0) + ' g';
             document.getElementById(`kpiDmi${s}`).innerText = r.finalDmi.toFixed(1);
             document.getElementById(`kpiDailyCost${s}`).innerText = r.avgDailyCost.toFixed(2);
-            
+            document.getElementById(`kpiDress${s}`).innerText = (r.dressing*100).toFixed(1) + '%';
+            document.getElementById(`kpiFcr${s}`).innerText = r.fcr.toFixed(2);
+            document.getElementById(`kpiCpk${s}`).innerText = fmtMoney2(r.costPerKgGain);
+
             // Detailed Breakdown
-            document.getElementById(`bdCalf${s}`).innerText = currencySymbol + r.breakdown.calf.toFixed(0);
-            document.getElementById(`bdFeed${s}`).innerText = currencySymbol + r.breakdown.feed.toFixed(0);
-            document.getElementById(`bdOverhead${s}`).innerText = currencySymbol + r.breakdown.overhead.toFixed(0);
-            document.getElementById(`bdSemen${s}`).innerText = currencySymbol + r.breakdown.semen.toFixed(0); // Restored
-            document.getElementById(`bdInterest${s}`).innerText = currencySymbol + r.breakdown.interest.toFixed(0);
-            document.getElementById(`bdTotal${s}`).innerText = currencySymbol + r.totalCost.toFixed(0);
-            
+            document.getElementById(`bdCalf${s}`).innerText = fmtMoney(r.breakdown.calf);
+            document.getElementById(`bdFeed${s}`).innerText = fmtMoney(r.breakdown.feed);
+            document.getElementById(`bdOverhead${s}`).innerText = fmtMoney(r.breakdown.overhead);
+            document.getElementById(`bdSemen${s}`).innerText = fmtMoney(r.breakdown.semen);
+            document.getElementById(`bdInterest${s}`).innerText = fmtMoney(r.breakdown.interest);
+            document.getElementById(`bdMort${s}`).innerText = fmtMoney(r.breakdown.mortality);
+            document.getElementById(`bdTotal${s}`).innerText = fmtMoney(r.totalCost);
+
             // Summary Table
-            document.getElementById(`sumRevenue${s}`).innerText = currencySymbol + r.revenue.toFixed(0);
-            document.getElementById(`sumProfit${s}`).innerText = currencySymbol + r.profit.toFixed(0);
+            document.getElementById(`sumRevenue${s}`).innerText = fmtMoney(r.revenue);
+            document.getElementById(`sumProfit${s}`).innerText = fmtMoney(r.profit);
             document.getElementById(`sumRoi${s}`).innerText = r.roi.toFixed(1) + '%';
-            document.getElementById(`sumCost${s}`).innerText = currencySymbol + r.totalCost.toFixed(0);
+            document.getElementById(`sumCost${s}`).innerText = fmtMoney(r.totalCost);
             document.getElementById(`sumWeight${s}`).innerText = r.weight.toFixed(0);
-            document.getElementById(`sumAdg${s}`).innerText = (r.avgAdg/1000).toFixed(2); // V2 uses kg/day here
+            document.getElementById(`sumCarcass${s}`).innerText = r.carcassWeight.toFixed(0);
+            document.getElementById(`sumDress${s}`).innerText = (r.dressing*100).toFixed(1) + '%';
+            document.getElementById(`sumAdg${s}`).innerText = (r.avgAdg/1000).toFixed(2);
             document.getElementById(`sumDmi${s}`).innerText = r.finalDmi.toFixed(1);
-            document.getElementById(`sumDailyFeed${s}`).innerText = r.avgDailyFeed.toFixed(2);
-            document.getElementById(`sumDailyOverhead${s}`).innerText = r.avgDailyOverhead.toFixed(2);
-            document.getElementById(`sumDailyCost${s}`).innerText = r.avgDailyCost.toFixed(2);
+            document.getElementById(`sumFcr${s}`).innerText = r.fcr.toFixed(2);
+            document.getElementById(`sumCpk${s}`).innerText = fmtMoney2(r.costPerKgGain);
+            document.getElementById(`sumDailyFeed${s}`).innerText = fmtMoney2(r.avgDailyFeed);
+            document.getElementById(`sumDailyOverhead${s}`).innerText = fmtMoney2(r.avgDailyOverhead);
+            document.getElementById(`sumDailyCost${s}`).innerText = fmtMoney2(r.avgDailyCost);
         }
 
         function updateDiff(A, B) {
@@ -1097,14 +1419,18 @@
             const winText = t.wins.replace('{win}', diff > 0 ? 'A' : 'B').replace('{amount}', Math.abs(diff).toFixed(0)).replace('{sym}', currencySymbol);
             el.innerText = winText;
             el.className = `mt-2 text-xs font-bold text-center py-1 rounded ${diff > 0 ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}`;
-            
-            document.getElementById('sumRevenueDiff').innerText = currencySymbol + (A.revenue - B.revenue).toFixed(0);
-            document.getElementById('sumProfitDiff').innerText = currencySymbol + (A.profit - B.profit).toFixed(0);
+
+            document.getElementById('sumRevenueDiff').innerText = fmtMoney(A.revenue - B.revenue);
+            document.getElementById('sumProfitDiff').innerText = fmtMoney(A.profit - B.profit);
             document.getElementById('sumRoiDiff').innerText = (A.roi - B.roi).toFixed(1) + '%';
-            document.getElementById('sumCostDiff').innerText = currencySymbol + (A.totalCost - B.totalCost).toFixed(0);
+            document.getElementById('sumCostDiff').innerText = fmtMoney(A.totalCost - B.totalCost);
             document.getElementById('sumWeightDiff').innerText = (A.weight - B.weight).toFixed(0);
+            document.getElementById('sumCarcassDiff').innerText = (A.carcassWeight - B.carcassWeight).toFixed(0);
+            document.getElementById('sumDressDiff').innerText = ((A.dressing - B.dressing)*100).toFixed(1) + '%';
             document.getElementById('sumAdgDiff').innerText = ((A.avgAdg - B.avgAdg)/1000).toFixed(2);
             document.getElementById('sumDmiDiff').innerText = (A.finalDmi - B.finalDmi).toFixed(1);
+            document.getElementById('sumFcrDiff').innerText = (A.fcr - B.fcr).toFixed(2);
+            document.getElementById('sumCpkDiff').innerText = fmtMoney2(A.costPerKgGain - B.costPerKgGain);
             document.getElementById('sumDailyFeedDiff').innerText = (A.avgDailyFeed - B.avgDailyFeed).toFixed(2);
             document.getElementById('sumDailyOverheadDiff').innerText = (A.avgDailyOverhead - B.avgDailyOverhead).toFixed(2);
             document.getElementById('sumDailyCostDiff').innerText = (A.avgDailyCost - B.avgDailyCost).toFixed(2);
@@ -1116,13 +1442,16 @@
         }
 
         function updateCharts(rA, rB) {
-            financialChart.data.datasets = [{ label: 'Scenario A', data: [rA.profit+rA.totalCost, rA.totalCost, rA.profit], backgroundColor: '#3b82f6' }];
-            if(rB) financialChart.data.datasets.push({ label: 'Scenario B', data: [rB.profit+rB.totalCost, rB.totalCost, rB.profit], backgroundColor: '#9333ea' });
+            const t = translations[currentLang];
+            financialChart.data.labels = [t.total_revenue || 'Revenue', t.total_cost || 'Cost', t.net_profit || 'Profit'];
+            financialChart.data.datasets = [{ label: t.scenario_a || 'A', data: [rA.revenue, rA.totalCost, rA.profit], backgroundColor: '#3b82f6' }];
+            if (rB) financialChart.data.datasets.push({ label: t.scenario_b || 'B', data: [rB.revenue, rB.totalCost, rB.profit], backgroundColor: '#9333ea' });
             financialChart.update();
+
             const len = Math.max(rA.wCurve.length, rB ? rB.wCurve.length : 0);
             growthChart.data.labels = Array.from({length:len}, (_,i)=>i+1);
-            growthChart.data.datasets = [{ label: 'Weight A', data: rA.wCurve, borderColor: '#3b82f6', tension: 0.3 }];
-            if(rB) growthChart.data.datasets.push({ label: 'Weight B', data: rB.wCurve, borderColor: '#9333ea', borderDash:[5,5], tension: 0.3 });
+            growthChart.data.datasets = [{ label: (t.scenario_a || 'A') + ' (kg)', data: rA.wCurve, borderColor: '#3b82f6', tension: 0.3 }];
+            if (rB) growthChart.data.datasets.push({ label: (t.scenario_b || 'B') + ' (kg)', data: rB.wCurve, borderColor: '#9333ea', borderDash:[5,5], tension: 0.3 });
             growthChart.update();
         }
     </script>
