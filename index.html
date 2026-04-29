@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cattle Profit Calculator - V5.1</title>
+    <title>Cattle Profit Calculator - V5.2</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
@@ -48,7 +48,7 @@
             <h1 class="text-2xl md:text-3xl font-bold text-gray-800">
                 <i class="fas fa-cow text-blue-600 mr-2"></i><span data-i18n="title_main">Cattle Profit Calculator</span>
             </h1>
-            <span class="version-pill">V5.1</span>
+            <span class="version-pill">V5.2</span>
         </div>
 
         <div class="flex items-center gap-2 bg-white p-2 rounded-lg shadow-sm border border-gray-200">
@@ -65,6 +65,7 @@
             <select id="langSelector" onchange="changeLanguage(this.value)" class="bg-transparent text-gray-700 py-1 px-2 focus:outline-none text-sm font-medium cursor-pointer">
                 <option value="en">🇬🇧 EN</option>
                 <option value="ru">🇷🇺 RU</option>
+                <option value="vi">🇻🇳 VI</option>
                 <option value="az">🇦🇿 AZ</option>
             </select>
         </div>
@@ -876,6 +877,65 @@
                 sens_carc_max: "Туша макс (за кг)",
                 sens_fat_min: "Откорм мин (за кг СВ)",
                 sens_fat_max: "Откорм макс (за кг СВ)"
+            },
+            vi: {
+                title_main: "Máy Tính Lợi Nhuận Bò Thịt",
+                global_assumptions: "Giả Định Chung",
+                calf_cost: "Giá Bê",
+                interest_rate: "Lãi Suất (%)",
+                overhead_bull: "Chi Phí Chung Bò Đực (%)",
+                overhead_heifer: "Chi Phí Chung Bò Cái Tơ (%)",
+                mortality_pct: "Hao Hụt / Mất Mát (%)",
+                birth_weight: "Trọng Lượng Sơ Sinh (kg)",
+                scenario_a: "Kịch Bản A",
+                scenario_b: "Kịch Bản B",
+                bull: "Bò Đực", heifer: "Bò Cái Tơ",
+                source: "Nguồn", farm_born: "Sinh Tại Trại", imported: "Nhập Khẩu",
+                breed: "Giống",
+                feeding_strategy: "Chiến Lược Cho Ăn",
+                starter: "Khởi Đầu", end_age_starter: "Kết Thúc (tháng)",
+                grow_phase: "Tăng Trưởng", end_growing_age: "Kết Thúc Tăng Trưởng (tháng)",
+                fatten_phase: "Vỗ Béo", heifer_feed: "Thức Ăn Bò Cái Tơ",
+                weight_kg: "Trọng Lượng (kg)", age_mo: "Tuổi (tháng)", price_per_kg: "Giá (mỗi kg)",
+                target_age: "Tuổi Mục Tiêu",
+                sale_method: "Phương Thức Bán", live_weight: "Trọng Lượng Sống", carcass: "Thân Thịt",
+                live_price: "Giá Hơi", carcass_price: "Giá Thân Thịt",
+                sale_price: "Bán", semen: "Tinh",
+                results: "Kết Quả",
+                net_profit: "Lợi Nhuận Ròng", roi: "ROI",
+                final_weight: "Trọng Lượng Cuối", total_cost: "Tổng Chi Phí",
+                avg_adg_short: "ADG TB", dmi_short: "DMI", cost_day_short: "CP/Ngày",
+                dressing_short: "Tỷ Lệ Móc", fcr_short: "FCR", cost_kg_gain_short: "CP/kg tăng",
+                summary_title: "Tóm Tắt So Sánh Hiệu Suất",
+                financial_chart: "Tài Chính", growth_chart: "Đường Cong Tăng Trưởng", cost_breakdown: "Chi Tiết Chi Phí",
+                wins: "Kịch bản {win} thắng {sym}{amount}",
+                total_revenue: "Tổng Doanh Thu",
+                avg_adg: "ADG TB (kg/ngày)", final_dmi: "DMI Cuối (kg/ngày)",
+                fcr_full: "FCR (kg VCK / kg tăng)", cost_kg_gain: "Chi phí mỗi kg tăng",
+                carcass_weight: "Trọng Lượng Thân Thịt (kg)", dressing_pct: "Tỷ Lệ Móc Hàm %",
+                daily_feed_cost: "Chi Phí Thức Ăn/Ngày", daily_overhead_cost: "Chi Phí Chung/Ngày", avg_cost_day: "CP TB/Ngày",
+                category: "Hạng Mục", initial_cost: "Chi Phí Ban Đầu (Bê/Nhập)",
+                feed_cost: "Tổng Chi Phí Thức Ăn", overheads: "Chi Phí Chung", semen_breeding: "Tinh / Phối Giống",
+                interest_cost: "Chi Phí Lãi", mortality_cost: "Hao Hụt / Mất Mát", total_cost_upper: "TỔNG CHI PHÍ",
+                metric: "Chỉ Tiêu", diff: "Chênh Lệch (A-B)",
+                compare_toggle: "So Sánh với Kịch Bản B",
+                offline: "Ngoại Tuyến", settings: "Cài Đặt", changes_saved: "Đã Lưu",
+                app_settings: "Cài Đặt Ứng Dụng", sheet_connection: "Kết Nối Google Sheet",
+                sheet_help: "Dán URL Apps Script Web App của bạn ở đây.", test_btn: "Kiểm Tra",
+                sheet_note: 'Lưu ý: Đảm bảo script được triển khai cho "Bất kỳ ai".',
+                currency_label: "Tiền Tệ", reset_all: "Đặt Lại Tất Cả", cancel: "Hủy", save_connect: "Lưu & Kết Nối",
+                add_new_breed: "Thêm Giống Mới", breed_name: "Tên Giống", breed_category: "Hạng Mục",
+                cat_dairy: "Bò Sữa (kiểu Holstein)", cat_cross: "Lai Sữa × Thịt", cat_beef: "Bò Thịt Thuần",
+                paste_24_adg: "Dán 24 giá trị (Tháng 1–24)", paste_24_dmi: "Dán 24 giá trị (Tháng 1–24)",
+                quick_templates: "Mẫu Có Sẵn", tpl_high: "Hiệu Suất Cao", tpl_avg: "Trung Bình",
+                save_breed: "Lưu Giống", new_breed: "Giống Mới", save_sheet: "Lưu",
+                sensitivity_title: "Độ Nhạy — Lợi Nhuận / Đầu",
+                sensitivity_basis: "Dựa trên Kịch Bản A • Chế độ thân thịt",
+                sensitivity_help: "Hàng: giá thân thịt (mỗi kg). Cột: giá khẩu phần vỗ béo (mỗi kg VCK). Các thông số khác của Kịch Bản A giữ nguyên. Ô vàng = cài đặt hiện tại của bạn.",
+                sens_carc_min: "Thân thịt min (mỗi kg)",
+                sens_carc_max: "Thân thịt max (mỗi kg)",
+                sens_fat_min: "Vỗ béo min (mỗi kg VCK)",
+                sens_fat_max: "Vỗ béo max (mỗi kg VCK)"
             },
             az: {
                 title_main: "Mal-Qara Kalkulyatoru",
