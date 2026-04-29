@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cattle Profit Calculator - V5.0</title>
+    <title>Cattle Profit Calculator - V5.1</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
@@ -48,7 +48,7 @@
             <h1 class="text-2xl md:text-3xl font-bold text-gray-800">
                 <i class="fas fa-cow text-blue-600 mr-2"></i><span data-i18n="title_main">Cattle Profit Calculator</span>
             </h1>
-            <span class="version-pill">V5.0</span>
+            <span class="version-pill">V5.1</span>
         </div>
 
         <div class="flex items-center gap-2 bg-white p-2 rounded-lg shadow-sm border border-gray-200">
@@ -190,8 +190,8 @@
                         <input type="number" id="overheadPctHeifer" value="25" class="w-full mt-1 p-1 border rounded text-sm bg-pink-50" oninput="onInputChange()">
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-orange-600" data-i18n="mortality_pct">Mortality (% of total)</label>
-                        <input type="number" id="mortalityPct" value="5" class="w-full mt-1 p-1 border rounded text-sm bg-orange-50" oninput="onInputChange()">
+                        <label class="block text-xs font-medium text-orange-600" data-i18n="mortality_pct" title="Share of bulls lost before slaughter. Costs paid on all, revenue from survivors only.">Mortality / Loss (%)</label>
+                        <input type="number" id="mortalityPct" value="5" min="0" max="50" step="0.5" class="w-full mt-1 p-1 border rounded text-sm bg-orange-50" oninput="onInputChange()" title="e.g. 5 = start with 100 bulls, sell 95">
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-gray-500" data-i18n="birth_weight">Birth Weight (kg)</label>
@@ -593,94 +593,94 @@
                         <tr>
                             <th class="px-4 py-3" data-i18n="metric">Metric</th>
                             <th class="px-4 py-3 text-blue-600" data-i18n="scenario_a">Scenario A</th>
-                            <th class="px-4 py-3 text-purple-600" data-i18n="scenario_b">Scenario B</th>
-                            <th class="px-4 py-3 text-gray-400" data-i18n="diff">Diff (A-B)</th>
+                            <th class="px-4 py-3 text-purple-600 col-b" data-i18n="scenario_b">Scenario B</th>
+                            <th class="px-4 py-3 text-gray-400 col-diff" data-i18n="diff">Diff (A-B)</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         <tr class="bg-white">
                             <td class="px-4 py-3 font-medium text-gray-900" data-i18n="total_revenue">Total Income (Revenue)</td>
                             <td class="px-4 py-3 font-bold" id="sumRevenueA">₼0</td>
-                            <td class="px-4 py-3 font-bold" id="sumRevenueB">₼0</td>
-                            <td class="px-4 py-3 text-xs" id="sumRevenueDiff">-</td>
+                            <td class="px-4 py-3 font-bold col-b" id="sumRevenueB">₼0</td>
+                            <td class="px-4 py-3 text-xs col-diff" id="sumRevenueDiff">-</td>
                         </tr>
                         <tr class="bg-gray-50">
                             <td class="px-4 py-3 font-medium text-gray-900" data-i18n="total_cost">Total Cost</td>
                             <td class="px-4 py-3 text-red-500" id="sumCostA">₼0</td>
-                            <td class="px-4 py-3 text-red-500" id="sumCostB">₼0</td>
-                            <td class="px-4 py-3 text-xs" id="sumCostDiff">-</td>
+                            <td class="px-4 py-3 text-red-500 col-b" id="sumCostB">₼0</td>
+                            <td class="px-4 py-3 text-xs col-diff" id="sumCostDiff">-</td>
                         </tr>
                         <tr class="bg-white">
                             <td class="px-4 py-3 font-medium text-gray-900" data-i18n="net_profit">Net Profit</td>
                             <td class="px-4 py-3 text-lg font-bold" id="sumProfitA">₼0</td>
-                            <td class="px-4 py-3 text-lg font-bold" id="sumProfitB">₼0</td>
-                            <td class="px-4 py-3 font-bold" id="sumProfitDiff">-</td>
+                            <td class="px-4 py-3 text-lg font-bold col-b" id="sumProfitB">₼0</td>
+                            <td class="px-4 py-3 font-bold col-diff" id="sumProfitDiff">-</td>
                         </tr>
                         <tr class="bg-gray-50">
                             <td class="px-4 py-3 font-medium text-gray-900" data-i18n="roi">ROI (%)</td>
                             <td class="px-4 py-3 font-bold" id="sumRoiA">0%</td>
-                            <td class="px-4 py-3 font-bold" id="sumRoiB">0%</td>
-                            <td class="px-4 py-3 text-xs" id="sumRoiDiff">-</td>
+                            <td class="px-4 py-3 font-bold col-b" id="sumRoiB">0%</td>
+                            <td class="px-4 py-3 text-xs col-diff" id="sumRoiDiff">-</td>
                         </tr>
                         <tr class="bg-white">
                             <td class="px-4 py-3 font-medium text-gray-900" data-i18n="final_weight">Final Weight (kg)</td>
                             <td class="px-4 py-3" id="sumWeightA">0</td>
-                            <td class="px-4 py-3" id="sumWeightB">0</td>
-                            <td class="px-4 py-3 text-xs" id="sumWeightDiff">-</td>
+                            <td class="px-4 py-3 col-b" id="sumWeightB">0</td>
+                            <td class="px-4 py-3 text-xs col-diff" id="sumWeightDiff">-</td>
                         </tr>
                         <tr class="bg-gray-50">
                             <td class="px-4 py-3 font-medium text-gray-900" data-i18n="carcass_weight">Carcass Weight (kg)</td>
                             <td class="px-4 py-3" id="sumCarcassA">0</td>
-                            <td class="px-4 py-3" id="sumCarcassB">0</td>
-                            <td class="px-4 py-3 text-xs" id="sumCarcassDiff">-</td>
+                            <td class="px-4 py-3 col-b" id="sumCarcassB">0</td>
+                            <td class="px-4 py-3 text-xs col-diff" id="sumCarcassDiff">-</td>
                         </tr>
                         <tr class="bg-white">
                             <td class="px-4 py-3 font-medium text-gray-900" data-i18n="dressing_pct">Dressing %</td>
                             <td class="px-4 py-3" id="sumDressA">0%</td>
-                            <td class="px-4 py-3" id="sumDressB">0%</td>
-                            <td class="px-4 py-3 text-xs" id="sumDressDiff">-</td>
+                            <td class="px-4 py-3 col-b" id="sumDressB">0%</td>
+                            <td class="px-4 py-3 text-xs col-diff" id="sumDressDiff">-</td>
                         </tr>
                         <tr class="bg-gray-50">
                             <td class="px-4 py-3 font-medium text-gray-900" data-i18n="avg_adg">Avg ADG (kg/day)</td>
                             <td class="px-4 py-3" id="sumAdgA">0</td>
-                            <td class="px-4 py-3" id="sumAdgB">0</td>
-                            <td class="px-4 py-3 text-xs" id="sumAdgDiff">-</td>
+                            <td class="px-4 py-3 col-b" id="sumAdgB">0</td>
+                            <td class="px-4 py-3 text-xs col-diff" id="sumAdgDiff">-</td>
                         </tr>
                         <tr class="bg-white">
                             <td class="px-4 py-3 font-medium text-gray-900" data-i18n="final_dmi">Final DMI (kg/day)</td>
                             <td class="px-4 py-3" id="sumDmiA">0</td>
-                            <td class="px-4 py-3" id="sumDmiB">0</td>
-                            <td class="px-4 py-3 text-xs" id="sumDmiDiff">-</td>
+                            <td class="px-4 py-3 col-b" id="sumDmiB">0</td>
+                            <td class="px-4 py-3 text-xs col-diff" id="sumDmiDiff">-</td>
                         </tr>
                         <tr class="bg-gray-50">
                             <td class="px-4 py-3 font-medium text-gray-900" data-i18n="fcr_full">FCR (kg DM / kg gain)</td>
                             <td class="px-4 py-3" id="sumFcrA">0</td>
-                            <td class="px-4 py-3" id="sumFcrB">0</td>
-                            <td class="px-4 py-3 text-xs" id="sumFcrDiff">-</td>
+                            <td class="px-4 py-3 col-b" id="sumFcrB">0</td>
+                            <td class="px-4 py-3 text-xs col-diff" id="sumFcrDiff">-</td>
                         </tr>
                         <tr class="bg-white">
                             <td class="px-4 py-3 font-medium text-gray-900" data-i18n="cost_kg_gain">Cost per kg gain</td>
                             <td class="px-4 py-3" id="sumCpkA">0</td>
-                            <td class="px-4 py-3" id="sumCpkB">0</td>
-                            <td class="px-4 py-3 text-xs" id="sumCpkDiff">-</td>
+                            <td class="px-4 py-3 col-b" id="sumCpkB">0</td>
+                            <td class="px-4 py-3 text-xs col-diff" id="sumCpkDiff">-</td>
                         </tr>
                         <tr class="bg-gray-50">
                             <td class="px-4 py-3 font-medium text-gray-900" data-i18n="daily_feed_cost">Daily Feed Cost</td>
                             <td class="px-4 py-3" id="sumDailyFeedA">₼0</td>
-                            <td class="px-4 py-3" id="sumDailyFeedB">₼0</td>
-                            <td class="px-4 py-3 text-xs" id="sumDailyFeedDiff">-</td>
+                            <td class="px-4 py-3 col-b" id="sumDailyFeedB">₼0</td>
+                            <td class="px-4 py-3 text-xs col-diff" id="sumDailyFeedDiff">-</td>
                         </tr>
                         <tr class="bg-white">
                             <td class="px-4 py-3 font-medium text-gray-900" data-i18n="daily_overhead_cost">Daily Overhead Cost</td>
                             <td class="px-4 py-3" id="sumDailyOverheadA">₼0</td>
-                            <td class="px-4 py-3" id="sumDailyOverheadB">₼0</td>
-                            <td class="px-4 py-3 text-xs" id="sumDailyOverheadDiff">-</td>
+                            <td class="px-4 py-3 col-b" id="sumDailyOverheadB">₼0</td>
+                            <td class="px-4 py-3 text-xs col-diff" id="sumDailyOverheadDiff">-</td>
                         </tr>
                         <tr class="bg-gray-50">
                             <td class="px-4 py-3 font-medium text-gray-900" data-i18n="avg_cost_day">Avg Cost/Day</td>
                             <td class="px-4 py-3" id="sumDailyCostA">₼0</td>
-                            <td class="px-4 py-3" id="sumDailyCostB">₼0</td>
-                            <td class="px-4 py-3 text-xs" id="sumDailyCostDiff">-</td>
+                            <td class="px-4 py-3 col-b" id="sumDailyCostB">₼0</td>
+                            <td class="px-4 py-3 text-xs col-diff" id="sumDailyCostDiff">-</td>
                         </tr>
                     </tbody>
                 </table>
@@ -697,21 +697,51 @@
                 <div class="h-64"><canvas id="growthChart"></canvas></div>
             </div>
 
+            <!-- Sensitivity Table (Carcass price × Finishing ration cost) -->
+            <div class="card p-6 overflow-x-auto">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-lg font-bold text-gray-700" data-i18n="sensitivity_title">Sensitivity — Net Profit / Head</h3>
+                    <span class="text-xs text-gray-500" data-i18n="sensitivity_basis">Based on Scenario A • Carcass mode</span>
+                </div>
+                <p class="text-xs text-gray-500 mb-3" data-i18n="sensitivity_help">
+                    Rows: carcass price (per kg). Columns: finishing ration price (per kg DM). All other Scenario A inputs (breed, age, mortality, etc.) stay fixed. The base-case cell (your current settings) is highlighted.
+                </p>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3 text-xs">
+                    <div>
+                        <label class="block text-gray-500" data-i18n="sens_carc_min">Carcass min (per kg)</label>
+                        <input type="number" id="sensCarcMin" value="6" step="0.5" class="w-full p-1 border rounded" oninput="updateSensitivity()">
+                    </div>
+                    <div>
+                        <label class="block text-gray-500" data-i18n="sens_carc_max">Carcass max (per kg)</label>
+                        <input type="number" id="sensCarcMax" value="12" step="0.5" class="w-full p-1 border rounded" oninput="updateSensitivity()">
+                    </div>
+                    <div>
+                        <label class="block text-gray-500" data-i18n="sens_fat_min">Finishing min (per kg DM)</label>
+                        <input type="number" id="sensFatMin" value="0.35" step="0.01" class="w-full p-1 border rounded" oninput="updateSensitivity()">
+                    </div>
+                    <div>
+                        <label class="block text-gray-500" data-i18n="sens_fat_max">Finishing max (per kg DM)</label>
+                        <input type="number" id="sensFatMax" value="0.70" step="0.01" class="w-full p-1 border rounded" oninput="updateSensitivity()">
+                    </div>
+                </div>
+                <div id="sensitivityTableWrap" class="overflow-x-auto"></div>
+            </div>
+
             <!-- Detailed Breakdown -->
             <div class="card p-6 overflow-x-auto">
                 <h3 class="text-lg font-bold text-gray-700 mb-4" data-i18n="cost_breakdown">Detailed Costs</h3>
                 <table class="w-full text-sm text-left text-gray-500">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                        <tr><th class="px-4 py-2" data-i18n="category">Category</th><th class="px-4 py-2 text-blue-600">A</th><th class="px-4 py-2 text-purple-600">B</th></tr>
+                        <tr><th class="px-4 py-2" data-i18n="category">Category</th><th class="px-4 py-2 text-blue-600">A</th><th class="px-4 py-2 text-purple-600 col-b">B</th></tr>
                     </thead>
                     <tbody>
-                        <tr class="bg-white border-b"><td class="px-4 py-2" data-i18n="initial_cost">Initial Cost (Calf/Import)</td><td class="px-4 py-2" id="bdCalfA">-</td><td class="px-4 py-2" id="bdCalfB">-</td></tr>
-                        <tr class="bg-gray-50 border-b"><td class="px-4 py-2" data-i18n="feed_cost">Total Feed Cost</td><td class="px-4 py-2" id="bdFeedA">-</td><td class="px-4 py-2" id="bdFeedB">-</td></tr>
-                        <tr class="bg-white border-b"><td class="px-4 py-2" data-i18n="overheads">Overheads</td><td class="px-4 py-2" id="bdOverheadA">-</td><td class="px-4 py-2" id="bdOverheadB">-</td></tr>
-                        <tr class="bg-gray-50 border-b"><td class="px-4 py-2" data-i18n="semen_breeding">Semen / Breeding</td><td class="px-4 py-2" id="bdSemenA">-</td><td class="px-4 py-2" id="bdSemenB">-</td></tr>
-                        <tr class="bg-white border-b"><td class="px-4 py-2" data-i18n="interest_cost">Interest Cost</td><td class="px-4 py-2" id="bdInterestA">-</td><td class="px-4 py-2" id="bdInterestB">-</td></tr>
-                        <tr class="bg-gray-50 border-b"><td class="px-4 py-2" data-i18n="mortality_cost">Mortality Reserve</td><td class="px-4 py-2" id="bdMortA">-</td><td class="px-4 py-2" id="bdMortB">-</td></tr>
-                        <tr class="bg-blue-50 font-bold"><td class="px-4 py-2" data-i18n="total_cost_upper">TOTAL COST</td><td class="px-4 py-2 text-blue-700" id="bdTotalA">-</td><td class="px-4 py-2 text-purple-700" id="bdTotalB">-</td></tr>
+                        <tr class="bg-white border-b"><td class="px-4 py-2" data-i18n="initial_cost">Initial Cost (Calf/Import)</td><td class="px-4 py-2" id="bdCalfA">-</td><td class="px-4 py-2 col-b" id="bdCalfB">-</td></tr>
+                        <tr class="bg-gray-50 border-b"><td class="px-4 py-2" data-i18n="feed_cost">Total Feed Cost</td><td class="px-4 py-2" id="bdFeedA">-</td><td class="px-4 py-2 col-b" id="bdFeedB">-</td></tr>
+                        <tr class="bg-white border-b"><td class="px-4 py-2" data-i18n="overheads">Overheads</td><td class="px-4 py-2" id="bdOverheadA">-</td><td class="px-4 py-2 col-b" id="bdOverheadB">-</td></tr>
+                        <tr class="bg-gray-50 border-b"><td class="px-4 py-2" data-i18n="semen_breeding">Semen / Breeding</td><td class="px-4 py-2" id="bdSemenA">-</td><td class="px-4 py-2 col-b" id="bdSemenB">-</td></tr>
+                        <tr class="bg-white border-b"><td class="px-4 py-2" data-i18n="interest_cost">Interest Cost</td><td class="px-4 py-2" id="bdInterestA">-</td><td class="px-4 py-2 col-b" id="bdInterestB">-</td></tr>
+                        <tr class="bg-gray-50 border-b"><td class="px-4 py-2" data-i18n="mortality_cost">Mortality / Loss</td><td class="px-4 py-2" id="bdMortA">-</td><td class="px-4 py-2 col-b" id="bdMortB">-</td></tr>
+                        <tr class="bg-blue-50 font-bold"><td class="px-4 py-2" data-i18n="total_cost_upper">TOTAL COST</td><td class="px-4 py-2 text-blue-700" id="bdTotalA">-</td><td class="px-4 py-2 text-purple-700 col-b" id="bdTotalB">-</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -736,7 +766,7 @@
                 interest_rate: "Interest Rate (%)",
                 overhead_bull: "Overhead Bull (%)",
                 overhead_heifer: "Overhead Heifer (%)",
-                mortality_pct: "Mortality (% of total)",
+                mortality_pct: "Mortality / Loss (%)",
                 birth_weight: "Birth Weight (kg)",
                 scenario_a: "Scenario A",
                 scenario_b: "Scenario B",
@@ -767,7 +797,7 @@
                 daily_feed_cost: "Daily Feed Cost", daily_overhead_cost: "Daily Overhead Cost", avg_cost_day: "Avg Cost/Day",
                 category: "Category", initial_cost: "Initial Cost (Calf/Import)",
                 feed_cost: "Total Feed Cost", overheads: "Overheads", semen_breeding: "Semen / Breeding",
-                interest_cost: "Interest Cost", mortality_cost: "Mortality Reserve", total_cost_upper: "TOTAL COST",
+                interest_cost: "Interest Cost", mortality_cost: "Mortality / Loss", total_cost_upper: "TOTAL COST",
                 metric: "Metric", diff: "Diff (A-B)",
                 compare_toggle: "Compare with Scenario B",
                 offline: "Offline", settings: "Settings", changes_saved: "Changes Saved",
@@ -779,7 +809,14 @@
                 cat_dairy: "Dairy (Holstein-type)", cat_cross: "Dairy × Beef Cross", cat_beef: "Pure Beef",
                 paste_24_adg: "Paste 24 values (Month 1–24)", paste_24_dmi: "Paste 24 values (Month 1–24)",
                 quick_templates: "Quick Templates", tpl_high: "High Performance", tpl_avg: "Average",
-                save_breed: "Save Breed", new_breed: "New Breed", save_sheet: "Save"
+                save_breed: "Save Breed", new_breed: "New Breed", save_sheet: "Save",
+                sensitivity_title: "Sensitivity — Net Profit / Head",
+                sensitivity_basis: "Based on Scenario A • Carcass mode",
+                sensitivity_help: "Rows: carcass price (per kg). Columns: finishing ration price (per kg DM). All other Scenario A inputs (breed, age, mortality, etc.) stay fixed. The base-case cell (your current settings) is highlighted.",
+                sens_carc_min: "Carcass min (per kg)",
+                sens_carc_max: "Carcass max (per kg)",
+                sens_fat_min: "Finishing min (per kg DM)",
+                sens_fat_max: "Finishing max (per kg DM)"
             },
             ru: {
                 title_main: "Калькулятор Прибыли КРС",
@@ -788,7 +825,7 @@
                 interest_rate: "Процентная Ставка (%)",
                 overhead_bull: "Накладные Бык (%)",
                 overhead_heifer: "Накладные Тёлка (%)",
-                mortality_pct: "Падёж (% от итого)",
+                mortality_pct: "Падёж / Потери (%)",
                 birth_weight: "Вес при Рождении (кг)",
                 scenario_a: "Сценарий A",
                 scenario_b: "Сценарий B",
@@ -819,7 +856,7 @@
                 daily_feed_cost: "Корм/День", daily_overhead_cost: "Накладные/День", avg_cost_day: "Ср. Затраты/День",
                 category: "Категория", initial_cost: "Начальная Стоимость",
                 feed_cost: "Стоимость Корма", overheads: "Накладные", semen_breeding: "Семя / Разведение",
-                interest_cost: "Проценты", mortality_cost: "Резерв Падежа", total_cost_upper: "ИТОГО",
+                interest_cost: "Проценты", mortality_cost: "Падёж / Потери", total_cost_upper: "ИТОГО",
                 metric: "Показатель", diff: "Разница (A-B)",
                 compare_toggle: "Сравнить со Сценарием B",
                 offline: "Офлайн", settings: "Настройки", changes_saved: "Сохранено",
@@ -831,7 +868,14 @@
                 cat_dairy: "Молочная (Голштинская)", cat_cross: "Молочно-Мясная Помесь", cat_beef: "Чисто Мясная",
                 paste_24_adg: "Вставьте 24 значения (мес 1–24)", paste_24_dmi: "Вставьте 24 значения (мес 1–24)",
                 quick_templates: "Шаблоны", tpl_high: "Высокий Прирост", tpl_avg: "Средний",
-                save_breed: "Сохранить", new_breed: "Новая Порода", save_sheet: "Сохранить"
+                save_breed: "Сохранить", new_breed: "Новая Порода", save_sheet: "Сохранить",
+                sensitivity_title: "Чувствительность — Прибыль / голова",
+                sensitivity_basis: "По Сценарию A • Режим туши",
+                sensitivity_help: "Строки: цена туши (за кг). Столбцы: цена откормочного рациона (за кг СВ). Остальные параметры Сценария A фиксированы. Жёлтая ячейка — ваша текущая настройка.",
+                sens_carc_min: "Туша мин (за кг)",
+                sens_carc_max: "Туша макс (за кг)",
+                sens_fat_min: "Откорм мин (за кг СВ)",
+                sens_fat_max: "Откорм макс (за кг СВ)"
             },
             az: {
                 title_main: "Mal-Qara Kalkulyatoru",
@@ -878,7 +922,14 @@
                 cat_dairy: "Süd (Holşteyn tipli)", cat_cross: "Süd × Ət Çarpazı", cat_beef: "Saf Ət",
                 paste_24_adg: "24 dəyər (Ay 1–24)", paste_24_dmi: "24 dəyər (Ay 1–24)",
                 quick_templates: "Şablonlar", tpl_high: "Yüksək", tpl_avg: "Orta",
-                save_breed: "Saxla", new_breed: "Yeni Cins", save_sheet: "Saxla"
+                save_breed: "Saxla", new_breed: "Yeni Cins", save_sheet: "Saxla",
+                sensitivity_title: "Həssaslıq — Mənfəət / baş",
+                sensitivity_basis: "Ssenari A əsasında • Cəsəd rejimi",
+                sensitivity_help: "Sətirlər: cəsəd qiyməti (kq). Sütunlar: yağlandırma yeminin qiyməti (kq KM). Sarı xana — sizin cari tənzimləməniz.",
+                sens_carc_min: "Cəsəd min (kq)",
+                sens_carc_max: "Cəsəd maks (kq)",
+                sens_fat_min: "Yağlandırma min (kq KM)",
+                sens_fat_max: "Yağlandırma maks (kq KM)"
             }
         };
 
@@ -967,6 +1018,17 @@
             updateCurrencyUI();
             document.getElementById('langSelector').value = currentLang;
             changeLanguage(currentLang);
+
+            // Restore Compare toggle state and apply hide/show consistently
+            const savedCompare = localStorage.getItem('bc_v5_compareToggle');
+            if (savedCompare !== null) {
+                document.getElementById('compareToggle').checked = (savedCompare === 'true');
+            }
+            toggleCompare();
+
+            // Restore Sale-mode visual (live/carcass) for both scenarios
+            ['A','B'].forEach(s => toggleSale(s));
+            ['A','B'].forEach(s => toggleSource(s));
 
             if (webAppUrl) {
                 document.getElementById('webAppUrlInput').value = webAppUrl;
@@ -1250,7 +1312,11 @@
 
         function toggleCompare() {
             state.isCompare = document.getElementById('compareToggle').checked;
-            document.getElementById('scenarioBContainer').classList.toggle('hidden', !state.isCompare);
+            const hide = !state.isCompare;
+            // Hide entire Scenario B input panel
+            document.getElementById('scenarioBContainer').classList.toggle('hidden', hide);
+            // Hide all B columns and Diff columns in the summary table + breakdown
+            document.querySelectorAll('.col-b, .col-diff').forEach(el => el.classList.toggle('hidden', hide));
             localStorage.setItem('bc_v5_compareToggle', state.isCompare);
             updateCalculations();
         }
@@ -1314,8 +1380,13 @@
             const totalInt = (initialInv * intRate * durY) + ((feedCost + overhead + semen) * intRate * durY * 0.5);
 
             const subtotal = initialInv + feedCost + overhead + semen + totalInt;
-            const mortPct = parseFloat(document.getElementById('mortalityPct').value)/100 || 0;
-            const mortalityCost = subtotal * mortPct;
+            // Mortality model: if mortPct of bulls die before slaughter, costs were paid on
+            // ALL bulls (including the lost ones). Per-surviving-head amortization:
+            //   totalCost_perSurvivor = subtotal / (1 - mortPct)
+            //   mortalityCost = subtotal * mortPct / (1 - mortPct)
+            // E.g. 5% loss → cost markup of 5/95 = 5.26%, not 5%.
+            const mortPct = Math.max(0, Math.min(0.95, parseFloat(document.getElementById('mortalityPct').value)/100 || 0));
+            const mortalityCost = mortPct > 0 ? subtotal * mortPct / (1 - mortPct) : 0;
             const totalCost = subtotal + mortalityCost;
 
             // Revenue
@@ -1367,6 +1438,7 @@
                 updateDiff(rA, rB);
             }
             updateCharts(rA, rB);
+            updateSensitivity();
         }
 
         function fmtMoney(v) { return currencySymbol + (Math.round(v)).toLocaleString(); }
@@ -1441,17 +1513,132 @@
             growthChart = new Chart(document.getElementById('growthChart'), { type: 'line', data: { labels: [], datasets: [] }, options: { responsive: true, maintainAspectRatio: false, spanGaps: true } });
         }
 
+        // --- Sensitivity Table: re-runs Scenario A's calc with overridden carcass price + finishing-ration price.
+        function updateSensitivity() {
+            const wrap = document.getElementById('sensitivityTableWrap');
+            if (!wrap) return;
+            const baseR = state.A.lastResult;
+            if (!baseR || baseR.type !== 'bull') {
+                wrap.innerHTML = '<p class="text-xs text-orange-600 italic">Sensitivity table only available when Scenario A is set to Bull.</p>';
+                return;
+            }
+            const carcMin = parseFloat(document.getElementById('sensCarcMin').value);
+            const carcMax = parseFloat(document.getElementById('sensCarcMax').value);
+            const fatMin = parseFloat(document.getElementById('sensFatMin').value);
+            const fatMax = parseFloat(document.getElementById('sensFatMax').value);
+            if ([carcMin,carcMax,fatMin,fatMax].some(isNaN) || carcMax<=carcMin || fatMax<=fatMin) {
+                wrap.innerHTML = '<p class="text-xs text-red-600 italic">Invalid range.</p>';
+                return;
+            }
+
+            // Build evenly-spaced steps (5 columns, 7 rows by default)
+            const steps = (a,b,n) => Array.from({length:n},(_,i)=> a + (b-a)*i/(n-1));
+            const carcs = steps(carcMin, carcMax, 7);
+            const fats = steps(fatMin, fatMax, 5);
+
+            // Pull base inputs from Scenario A
+            const breedKey = document.getElementById('breedA').value;
+            const data = breedsData[breedKey] || Object.values(breedsData)[0];
+            const category = data.category || 'cross';
+            const endAge = parseInt(document.getElementById('ageA').value);
+            const birthW = parseFloat(document.getElementById('birthWeight').value) || 40;
+
+            const source = state.A.source;
+            let curWeight0 = birthW, curAge0 = 0, initialInv0 = parseFloat(document.getElementById('calfCost').value);
+            let startWeight = birthW;
+            if (source === 'import') {
+                curWeight0 = parseFloat(document.getElementById('importWeightA').value);
+                curAge0 = parseFloat(document.getElementById('importAgeA').value);
+                startWeight = curWeight0;
+                initialInv0 = curWeight0 * parseFloat(document.getElementById('importPriceA').value);
+            }
+
+            const pStart = parseFloat(document.getElementById('feedPriceInitialA').value);
+            const ageStartEnd = parseFloat(document.getElementById('ageStarterEndA').value);
+            const pGrow = parseFloat(document.getElementById('feedPriceBullGrowingA').value);
+            const ageBullSwitch = parseFloat(document.getElementById('ageBullSwitchA').value);
+            const overheadPct = parseFloat(document.getElementById('overheadPctBull').value)/100;
+            const intRate = parseFloat(document.getElementById('interestRate').value)/100;
+            const mortPct = Math.max(0, Math.min(0.95, parseFloat(document.getElementById('mortalityPct').value)/100 || 0));
+
+            // Pre-compute weight gain (independent of price scenario)
+            let curWeight = curWeight0;
+            const dmiByMonth = [];
+            for (let i = Math.floor(curAge0); i < endAge; i++) {
+                const idx = Math.min(i, data.adg.length - 1);
+                const adg = data.adg[idx] || 1000;
+                const dmi = data.dmi[idx] || 8;
+                dmiByMonth.push({i, dmi});
+                curWeight += (adg/1000) * 30.4;
+            }
+            const finalWeight = curWeight;
+            const dressing = getDressingPct(category, endAge);
+            const carcassWeight = finalWeight * dressing;
+
+            // Build rows: each (carcass$, finishing$) → profit
+            function profitFor(carcPrice, fatPrice) {
+                let feedCost = 0;
+                for (const {i, dmi} of dmiByMonth) {
+                    let price = pStart;
+                    if (i >= ageStartEnd) {
+                        price = (i < ageBullSwitch) ? pGrow : fatPrice;
+                    }
+                    feedCost += dmi * 30.4 * price;
+                }
+                const overhead = feedCost * overheadPct;
+                const durY = (endAge - curAge0)/12;
+                const totalInt = (initialInv0 * intRate * durY) + ((feedCost + overhead) * intRate * durY * 0.5);
+                const subtotal = initialInv0 + feedCost + overhead + totalInt;
+                const mortalityCost = mortPct > 0 ? subtotal * mortPct / (1 - mortPct) : 0;
+                const totalCost = subtotal + mortalityCost;
+                const rev = carcassWeight * carcPrice;
+                return rev - totalCost;
+            }
+
+            // Identify the base-case cell (closest to current carcassPriceA + feedPriceBullFatteningA)
+            const curCarc = parseFloat(document.getElementById('carcassPriceA').value);
+            const curFat = parseFloat(document.getElementById('feedPriceBullFatteningA').value);
+            const closestIdx = (arr, v) => arr.reduce((best,x,i)=> Math.abs(x-v) < Math.abs(arr[best]-v) ? i : best, 0);
+            const baseRow = closestIdx(carcs, curCarc);
+            const baseCol = closestIdx(fats, curFat);
+
+            // Build HTML table
+            const sym = currencySymbol;
+            let html = '<table class="w-full text-xs text-center border border-gray-200">';
+            html += '<thead class="bg-gray-100"><tr><th class="px-2 py-1 text-left">Carcass ' + sym + '/kg \\ Finishing ' + sym + '/kg DM</th>';
+            fats.forEach(f => html += `<th class="px-2 py-1">${f.toFixed(2)}</th>`);
+            html += '</tr></thead><tbody>';
+            carcs.forEach((c, ri) => {
+                html += `<tr class="${ri%2?'bg-gray-50':'bg-white'}"><td class="px-2 py-1 font-bold text-left">${c.toFixed(2)}</td>`;
+                fats.forEach((f, ci) => {
+                    const p = profitFor(c, f);
+                    const isBase = (ri === baseRow && ci === baseCol);
+                    let bg = '';
+                    if (isBase) bg = 'background-color:#fef9c3; font-weight:700;';
+                    else if (p < 0) bg = 'background-color:#fee2e2; color:#991b1b;';
+                    else if (p < 500) bg = 'background-color:#fef3c7;';
+                    else if (p > 1500) bg = 'background-color:#dcfce7; color:#166534;';
+                    html += `<td class="px-2 py-1" style="${bg}">${sym}${Math.round(p).toLocaleString()}</td>`;
+                });
+                html += '</tr>';
+            });
+            html += '</tbody></table>';
+            html += `<p class="text-[10px] text-gray-400 mt-2">Final live weight ${finalWeight.toFixed(0)} kg → carcass ${carcassWeight.toFixed(0)} kg @ ${(dressing*100).toFixed(1)}% dressing. Yellow = your current base case. Green = profit > ${sym}1,500. Red = loss.</p>`;
+            wrap.innerHTML = html;
+        }
+
         function updateCharts(rA, rB) {
             const t = translations[currentLang];
+            const showB = state.isCompare && rB;
             financialChart.data.labels = [t.total_revenue || 'Revenue', t.total_cost || 'Cost', t.net_profit || 'Profit'];
             financialChart.data.datasets = [{ label: t.scenario_a || 'A', data: [rA.revenue, rA.totalCost, rA.profit], backgroundColor: '#3b82f6' }];
-            if (rB) financialChart.data.datasets.push({ label: t.scenario_b || 'B', data: [rB.revenue, rB.totalCost, rB.profit], backgroundColor: '#9333ea' });
+            if (showB) financialChart.data.datasets.push({ label: t.scenario_b || 'B', data: [rB.revenue, rB.totalCost, rB.profit], backgroundColor: '#9333ea' });
             financialChart.update();
 
-            const len = Math.max(rA.wCurve.length, rB ? rB.wCurve.length : 0);
+            const len = Math.max(rA.wCurve.length, showB ? rB.wCurve.length : 0);
             growthChart.data.labels = Array.from({length:len}, (_,i)=>i+1);
             growthChart.data.datasets = [{ label: (t.scenario_a || 'A') + ' (kg)', data: rA.wCurve, borderColor: '#3b82f6', tension: 0.3 }];
-            if (rB) growthChart.data.datasets.push({ label: (t.scenario_b || 'B') + ' (kg)', data: rB.wCurve, borderColor: '#9333ea', borderDash:[5,5], tension: 0.3 });
+            if (showB) growthChart.data.datasets.push({ label: (t.scenario_b || 'B') + ' (kg)', data: rB.wCurve, borderColor: '#9333ea', borderDash:[5,5], tension: 0.3 });
             growthChart.update();
         }
     </script>
